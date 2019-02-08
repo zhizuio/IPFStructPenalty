@@ -9,4 +9,4 @@ You can download and install this package locally, or install it from github dir
 ```{r setup, include=FALSE}
 devtools::install_github("zhizuio/IPFStructPenalty/IPFStructPenalty")
 ```
-See the file `Test.R` for s simple start with simulated data. The scripts `Sim_reg.R` and `GDSC_reg.R` are for simulation studies and analyzing real data, respectively.
+See the file `Test.R` for a simple start with simulated data. The scripts `Sim_reg.R` and `GDSC_reg.R` are for simulation studies and analyzing real data, respectively.
