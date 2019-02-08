@@ -37,7 +37,7 @@ SimAnalysis <- function(num=1, scenario=1, hete=1){
   
   cvm <- array(0,dim=c(6000,24))
   methods <- c("lasso", "elastic-net", "IPF-lasso", "IPF-elastic-net", "tree-lasso", "IPF-tree")
-  for(i in 1:1){
+  for(i in 1:6){
     fit <- IPFStructPenaltyReg(x, y, x_test, y_test, p, foldid, method=methods[i])
     cvm[i,1:5] <- c(fit$cvm, fit$cvm_cv, fit$lambda, fit$ipf,
                    ifelse(length(fit$alpha)==1,fit$alpha,round(fit$alpha[1],dig=2)*100+fit$alpha[2]))
