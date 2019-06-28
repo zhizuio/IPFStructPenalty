@@ -26,10 +26,10 @@ drug.id2$drug.name <- gsub(" ", "-", drug.id2$drug.name)
 library(plyr)
 # mapping the drug_id to drug names in drug sensitivity data set
 ic50$drug_id <- mapvalues(ic50$drug_id, from = drug.id2[,2], to = drug.id2[,1])
-colnames(ic50)[c(1,2,4)] <- c("Cell.Line", "compound", "IC50")
+colnames(ic50)[c(1,2,3)] <- c("Cell.Line", "compound", "IC50")
 
 # transform drug sensitivity overall cell lines to a data matrix
-y0 <- reshape(ic50[,c(1,2,4)], v.names="IC50", timevar="compound", idvar="Cell.Line", direction="wide")
+y0 <- reshape(ic50[,c(1,2,3)], v.names="IC50", timevar="compound", idvar="Cell.Line", direction="wide")
 y0$Cell.Line <- gsub("-", ".", y0$Cell.Line)
 
 #================
