@@ -7,16 +7,20 @@ epsgo<- function(
 								# bounds for parameters
 								bounds, 
 								x, y,
+								family="gaussian",
 								lambda=NULL,
 								p=NULL,
 								intercept=TRUE,
+								foldid=NULL,
 								# number of first nonpenalised features
 								num.nonpen = 0,
+								# vector with stratum membership of each observation for conditional logistic lasso
+								strata=NULL,
                 # round.n -number of digits after comma
                 round.n=5,
 								parms.coding="none", # or log2 
 								# min value for the function Q.func
-								fminlower=0, 
+								fminlower=-1000, 
 								# do you want to find one min value and stop?
 								flag.find.one.min =FALSE,
 								# show plots ?   none, final iteration, all iterations 
@@ -38,8 +42,6 @@ epsgo<- function(
                 pdf.name=NULL, 
                 pdf.width=12, pdf.height=12,
                 my.mfrow=c(1,1), 
-								family="gaussian",
-								foldid=NULL,
 								standardize.response=FALSE,
 								parallel=FALSE,
 								modelList=NULL,
@@ -153,9 +155,9 @@ epsgo<- function(
 	## 3. ## compute Q(p_i), i = 1, ...,N
 	###################################################################################################################
 	
-	model.list<-apply(X, 1, eval(Q.func), parms.coding=parms.coding, x=x, y=y, lambda=lambda, maxevals=maxevals, seed=seed, family=family, 
+	model.list<-apply(X, 1, eval(Q.func), parms.coding=parms.coding, x=x, y=y, strata=strata, lambda=lambda, maxevals=maxevals, seed=seed, family=family, 
 	                    num.nonpen=num.nonpen,foldid=foldid, intercept=intercept, standardize.response=standardize.response, p=p, parallel=parallel,verbose=verbose,search.path=search.path,threshold=threshold, ...)
-	
+	#browser()
 	# take the Q.values
 	Q<- as.numeric(unlist( sapply(model.list, "[", "q.val")))
 	Q.min <- min (Q, na.rm=T)
@@ -251,7 +253,7 @@ epsgo<- function(
       EIold <- EImax	
 		  fminold <- fmin
 		
-			model.list.new<-apply(X, 1, eval(Q.func), parms.coding=parms.coding, x=x, y=y, lambda=lambda, maxevals=maxevals, seed=seed, family=family, 
+			model.list.new<-apply(X, 1, eval(Q.func), parms.coding=parms.coding, x=x, y=y, strata=strata, lambda=lambda, maxevals=maxevals, seed=seed, family=family, 
 		                          num.nonpen=num.nonpen,foldid=foldid, intercept=intercept, standardize.response=standardize.response, spatial=spatial, p=p, parallel=parallel,verbose=verbose,search.path=search.path,threshold=threshold, ...)
 		  
       model.list<-c(model.list, model.list.new )

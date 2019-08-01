@@ -1,12 +1,12 @@
-IPFStructPenaltyReg <- function(x, y, x_test, y_test, p, foldid, num.nonpen=0, method="IPF-lasso", 
-                        lambda=NULL, bounds=NULL, search.path=FALSE, EI.eps=0.01, fminlower = 0,
+IPFStructPenaltyReg <- function(x, y, x_test=NULL, y_test=NULL, p, foldid, num.nonpen=0, method="IPF-lasso", 
+                        lambda=NULL, bounds=NULL, strata=NULL, search.path=FALSE, EI.eps=0.01, fminlower = 0,
                         threshold=0, N=NULL, min.iter=20, seed=1234,parallel=FALSE, verbose=TRUE){
   if((method!="lasso") & (method!="tree-lasso") & is.null(bounds)){
     if(method=="elastic-net"){
       bounds <- t(data.frame(alpha=c(0,1)))
     }else{
       # the default setting for bounds is only for two data sources
-      if(method=="IPF-lasso"){
+      if(method=="IPF-lasso" | method=="clogitLasso"){
         bounds <- t(data.frame(ipf=c(0.1,10)))
       }else{
         if(method=="sIPF-elastic-net"){
@@ -29,10 +29,15 @@ IPFStructPenaltyReg <- function(x, y, x_test, y_test, p, foldid, num.nonpen=0, m
   
   x <- data.matrix(x)
   y <- data.matrix(y)
-  x_test <- data.matrix(x_test)
-  y_test <- data.matrix(y_test)    
+  if(is.null(x_test) & is.null(y_test)){
+    x_test <- x
+    y_test <- y
+  }else{
+    x_test <- data.matrix(x_test)
+    y_test <- data.matrix(y_test) 
+  }   
   m <- dim(y)[2]
-  foldid2 <- rep(foldid,m)
+  if(method!="clogitLasso") foldid2 <- rep(foldid,m)
   y_star <- as.vector(y)
   x_star <- kronecker(Diagonal(m), cbind(rep(1,dim(x)[1]),x))
   Beta <- as.vector(rbind(matrix(0,nrow=1+num.nonpen,ncol=m), matrix(10,ncol=dim(y)[2],nrow=sum(p,na.rm=T))))
@@ -247,6 +252,41 @@ IPFStructPenaltyReg <- function(x, y, x_test, y_test, p, foldid, num.nonpen=0, m
     mse_val <- sum((y_test - ypred)^2)/prod(dim(y_test))
     vs <- sum(Beta[-1,]!=0)
   }
+  
+  #==================
+  # Tree-IPF-lasso
+  #==================
+  if(method=="clogitLasso"){
+    fit <- epsgo(Q.func = "tune.clogit.interval", strata=strata, bounds = bounds, lambda=lambda, N=N,
+                 parms.coding = "none", seed = seed, fminlower = fminlower, x = x, y = y,
+                 foldid = foldid, p=p, epsilon=0.0001, min.iter=min.iter, 
+                 verbose=verbose, parallel=parallel, EI.eps=EI.eps)
+    sumint <- summary(fit, verbose=F)
+    mse_cv <- sumint$opt.error
+    lambda <- sumint$opt.lambda
+    ipf <- sumint$opt.ipf
+    
+    # beta<-matrix(0, nrow=1+num.nonpen+sum(p), ncol=m)
+    # for(s in 1:length(p)) beta[1+num.nonpen+ifelse(s==1,0,sum(p[1:(s-1)]))+1:p[s],]<-10+10*s
+    # adpen <- rep(1, dim(x_star)[2])
+    # adpen[as.vector(beta)==0] <- 0
+    # adpen[as.vector(beta)==20] <- 1
+    # for(i in 1:length(ipf)) adpen[as.vector(beta)==(10+10*(i+1))] <- ipf[i]
+    # adpen <- adpen*(dim(x_star)[2])/sum(adpen)
+    
+    ## prediction
+    # Beta <- clogitLasso(X=x_star,y=y_star, strata=strata,
+    #                       fraction = lambda,
+    #                       adpative = TRUE,
+    #                       p.fact = adpen)$beta
+    fit.clogit <- penalized(Surv(y[,1], event= y[,2])~strata, X, lambda1=lambda, lambda2=alpha, model="cox")
+    Beta <- matrix(fit.clogit@penalized, ncol=1)
+    ypred <- fit.clogit@lin.pred
+    mse_val <- NA
+    vs <- sum(Beta!=0)
+    alpha <- 1
+  }
+  
   if(method %in% c("lasso","tree-lasso")){
     return(list(cvm=mse_val, cvm_cv=mse_cv, alpha=alpha, lambda=lambda, pred=ypred, ipf=ipf, Beta=Beta, cv=vs))
   }else{

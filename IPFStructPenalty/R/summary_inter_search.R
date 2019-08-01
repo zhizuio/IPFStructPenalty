@@ -47,8 +47,15 @@ summary.intsearch<-function(object,digits = max(3, getOption("digits") - 3), ver
     # optimal models   
     opt.models <- sapply(fit$model.list, "[", "model") [fit$Ytrain == fit$fmin ]
     if(length(grep("alpha",colnames(fit$Xtrain)))==1){
-      tmp.models<-sapply(sapply(sapply(fit$model, "[", "model"), "[", "cvreg"), "[", "glmnet.fit")
-      n.features<-mapply(function(List, lam) List$df[which(List$lambda %in% lam)], tmp.models, lambdas)
+      if(names(fit$model[[1]]$model$cvreg)[1]!="cvl"){
+        tmp.models<-sapply(sapply(sapply(fit$model, "[", "model"), "[", "cvreg"), "[", "glmnet.fit")
+        n.features<-mapply(function(List, lam) List$df[which(List$lambda %in% lam)], tmp.models, lambdas)
+      }else{
+        lambdas <- unlist(sapply(sapply(fit$model, "[", "model"), "[", "alpha"))
+        n.features<-NA
+        tmp.models<-sapply(sapply(sapply(fit$model, "[", "model"), "[", "cvreg"), "[", "fullfit")
+        n.features<-mapply(function(List) sum(List@penalized[-1]!=0), tmp.models)
+      }
       opt.alpha <- opt.models[[1]]$alpha
       opt.lambda <- opt.models[[1]]$lambda
       opt.ipf <- opt.models[[1]]$ipf
@@ -62,7 +69,7 @@ summary.intsearch<-function(object,digits = max(3, getOption("digits") - 3), ver
       opt.lambda <- lambdas[which.min(deviances)]
       opt.ipf <- ipf[which.min(deviances),]
       opt.error <- fit$fmin
-      out <- list(info=data.frame(alpha=alphas,lambda=lambdas,ipf=ipf,deviance=deviances),
+      out <- list(info=data.frame(lambda=lambdas,alpha=alphas,ipf=ipf,deviance=deviances),
                   opt.alpha=opt.alpha, opt.lambda=opt.lambda, opt.ipf=opt.ipf, opt.error=opt.error)
     }
     
