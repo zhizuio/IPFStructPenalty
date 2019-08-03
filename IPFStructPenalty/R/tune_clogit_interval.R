@@ -1,3 +1,8 @@
+#' IPFStructPenalty
+#' @title Wrapper function for conditional logistic lasso objects.
+#' @description
+#' Wrapper function for conditional logistic lasso objects used by epsgo function. This function is mainly used within the function \code{epsgo}. See the \code{R} package \pkg{c060} for details.
+#' @export
 tune.clogit.interval<-function(parms, x=x, y=y,
                                          x_test=NULL,
                                          y_test=NULL,

@@ -1,7 +1,7 @@
-#' Plot coefficients from a \code{clogitLasso} object
-#'
+#' IPFStructPenalty
+#' @title Plots coefficients from a \code{clogitLasso} object
+#' @description
 #' Plot the parameter profile associated \code{clogitLasso} object
-#'
 #' @param x an objet of type \code{clogitLasso}
 #' @param logLambda Set to  TRUE if the horizontal axis is on log scale
 #' @param add.legend Take the value TRUE if legend should be printed in top right hand corner
@@ -9,7 +9,6 @@
 #' @param lty Same to \code{lty} parameter of plot function
 #' @param col Same to \code{col} parameter of plot function
 #' @param ... additional arguments to plot function
-#' @author Marta Avalos, Helene Pouyes, Marius Kwemou and Binbin Xu
 #' @references Avalos, M., Pouyes, H., Grandvalet, Y., Orriols, L., & Lagarde, E. (2015). \emph{Sparse conditional logistic
 #'  regression for analyzing large-scale matched data from epidemiological studies: a simple algorithm.} BMC bioinformatics, 16(6), S1.  \doi{10.1186/1471-2105-16-S6-S1}.
 #' @importFrom graphics matplot legend text
@@ -33,6 +32,7 @@ plot.clogitLasso <- function (x,
                              col = 1:ncol(x$beta),
                              ...)
 {
+  ## code author: Marta Avalos, Helene Pouyes, Marius Kwemou and Binbin Xu
   if (logLambda)
     horiz <- log(x$fraction)
   else

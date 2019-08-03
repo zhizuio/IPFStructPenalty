@@ -1,4 +1,8 @@
-
+#' IPFStructPenalty
+#' @title ExpImprovement
+#' @description
+#' Calculates the expected improvement of the funtion \code{Q.func}. See the \code{R} package  \pkg{penalizedSVM} for details.
+#' @export
 ExpImprovement<- function(x_new, fmin, fit.gp, muX=NULL, muY=NULL, EI.eps=0.01){
 
 ##function EI = ExpImprovement(tst, P)		

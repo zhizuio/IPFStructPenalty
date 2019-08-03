@@ -1,4 +1,8 @@
-
+#' IPFStructPenalty
+#' @title Function producing stratified/ balanced folds for cross validation
+#' @description
+#' Get balanced folds for cross validation, which are used for tuning penalization parameters. This function is mainly used within the function \code{epsgo}. See the \code{R} package \pkg{c060} for details.
+#' @export
 balancedFolds <- function(class.column.factor, cross.outer)
 {
   #stolen from MCREstimate package

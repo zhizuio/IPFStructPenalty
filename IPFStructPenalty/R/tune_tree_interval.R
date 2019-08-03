@@ -1,9 +1,28 @@
+#' IPFStructPenalty
+#' @title Wrapper function for tree-lasso objects.
+#' @description
+#' Wrapper function for tree-lasso objects used by epsgo function. This function is mainly used within the function \code{epsgo}.
+#' @param parms tuning parameter alpha for the tree-lasso object.
+#' @param x,y \code{x} is a matrix where each row refers to a sample a each column refers to a gene; \code{y} is a factor which includes the class for each sample
+#' @param lambda A user supplied lambda sequence. 
+#' @param nfolds number of cross-validation's folds, default 5.
+#' @param foldid an optional vector of values between 1 and nfold identifying what fold each observation is in. If supplied, nfold can be missing.
+#' @param num.nonpen number of predictors forced to be estimated (i.e., nonpenalization).
+#' @param seed random seed
+#' @param intercept should  intercept(s) be fitted (default=\code{TRUE}) or set to zero (\code{FALSE}).
+#' @param standardize.response standardization for the response variables. Default: \code{TRUE}.
+#' @param p the number of predictors from different data source.
+#' @param verbose print the middle search information, default is \code{TRUE}.
+#' @param parallel  If \code{TRUE}, use parallel foreach to fit each lambda. If \code{c(TRUE,TRUE)}, use parallel foreach to fit each lambda and each fold. 
+#' @param search.path save the visited points, default is \code{FALSE}.
+#' @param threshold threshold for estimated coefficients of the tree-lasso models.
+#' @export
 tune.tree.interval<-function(parms, x, y,
                                 lambda = NULL, 
                                 nfolds = 5,
+                                foldid=NULL,
                                 num.nonpen = 0,
                                 seed=12345, 
-                                foldid=NULL,
                                 intercept=TRUE,
                                 standardize.response=FALSE,
                                 p=NULL,
@@ -25,7 +44,7 @@ tune.tree.interval<-function(parms, x, y,
   #=========
   # using augmented data
   #=========
-  if(is.null(lambda)) cat("No given lambda sequence!")
+  if(is.null(lambda)) stop("No given lambda sequence!")
   lambda <- matrix(lambda,ncol=1)
   x2 <- x
   for(i in 1:(length(p)-1)) x2[,num.nonpen+(cumsum(p)[i]+1):cumsum(p)[i+1]] <- x2[,num.nonpen+(cumsum(p)[i]+1):cumsum(p)[i+1]]/parms[i]

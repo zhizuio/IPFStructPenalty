@@ -1,6 +1,37 @@
-
-###########################################################################################################
-###########################################################################################################
+#' IPFStructPenalty
+#' @title Efficient Parameter Selection via Global Optimization
+#' @description
+#' Finds an optimal solution for the \code{Q.func} function.
+#' @param Q.func name of the function to be minimized.
+#' @param bounds bounds for the interval-searching parameters
+#' @param x,y input matrix.
+#' @param family response type.
+#' @param lambda optional user-supplied \code{lambda} sequence; default is NULL, and \code{espsgo} chooses its own sequence.
+#' @param intercept should  intercept(s) be fitted (default=\code{TRUE}) or set to zero (\code{FALSE}).
+#' @param strata stratification variable for the Cox survival model.
+#' @param threshold threshold for estimated coefficients of the tree-lasso models.
+#' @param foldid an vector of values for the cross-validation.
+#' @param standardize.response standardization for the response variables. Default: \code{TRUE}.
+#' @param p the number of predictors from different data source.
+#' @param num.nonpen number of predictors forced to be estimated (i.e., nonpenalization).
+#' @param round.n number of digits after comma, default is \code{5}.
+#' @param parms.coding parmeters coding: none or log2, default: \code{none}.
+#' @param fminlower minimal value for the function Q.func, default is 0.
+#' @param flag.find.one.min do you want to find one min value and stop? Default: \code{FALSE}.
+#' @param show show plots of DIRECT algorithm: none, final iteration, all iterations. Default: \code{none}.
+#' @param N define the number of start points depending on the dimensionality of the parameter space.
+#' @param maxevals the maximum number of DIRECT function evaluations, default: 500.
+#' @param espilon the convergence shreshold for the function \code{Q.func}, default is 0.01.
+#' @param EI.eps the convergence threshold for the expected improvement between fmin and the updated point 
+#' @param min.iter the minimus iterations after the initial \code{N} iterations.
+#' @param verbose print the middle search information, default is \code{TRUE}.
+#' @param seed random seed
+#' @param parallel If \code{TRUE}, use parallel foreach to fit each fold except parallelizing each lambda for the tree-lasso methods. If \code{c(TRUE,TRUE)}, use parallel foreach to fit each fold and each lambda.
+#' @param search.path save the visited points, default is \code{FALSE}.
+#' @param modelList detailed information of the search process
+#' @references Frohlich, H. & Zell, A. (2005). \emph{Efficient Parameter Selection for Support Vector Machines in Clas- sification and Regression via Model-Based Global Optimization.} Proceedings of the International Joint Conference of Neural Networks, pp 1431-1438.
+#' @references Sill, M., Hielscher, T., Becker, N. & Zucknick, M. (2014).\emph{c060: Extended Inference with Lasso and elastic net Regularized Cox and Generalized Linear methods.} Journal of Statistical Software, 62(5):1-22.
+#' @export
 epsgo<- function(
 								# function to be minimized
 								Q.func, 
@@ -16,11 +47,14 @@ epsgo<- function(
 								num.nonpen = 0,
 								# vector with stratum membership of each observation for conditional logistic lasso
 								strata=NULL,
+								# threshold for estimated coefficients of the IPF-tree-lass
+								threshold=0,
+								standardize.response=FALSE,
                 # round.n -number of digits after comma
                 round.n=5,
 								parms.coding="none", # or log2 
 								# min value for the function Q.func
-								fminlower=-1000, 
+								fminlower=0, 
 								# do you want to find one min value and stop?
 								flag.find.one.min =FALSE,
 								# show plots ?   none, final iteration, all iterations 
@@ -42,22 +76,15 @@ epsgo<- function(
                 pdf.name=NULL, 
                 pdf.width=12, pdf.height=12,
                 my.mfrow=c(1,1), 
-								standardize.response=FALSE,
 								parallel=FALSE,
 								modelList=NULL,
                 # verbose?
                 verbose=TRUE,
                 seed=123, 
 								search.path=FALSE,
-								threshold=0,
                 ... ){
- 
-
- 
-	# The EPSGO algorithm (from Holger's paper)
+	# The EPSGO algorithm (theory from Frohlich and Zell (2005) and original code from Sill, Hielscher, Becker and Zucknick (2014))
 	#
-	#EPSGO = Efficient Parameter Selection via Global Optimization
-
 	#Input: function Q.func to measure gen. error
 	#			  bounds: data frame with parameter bounds
 	#								rownames: parameter names

@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.clogitLasso.R
 \name{plot.clogitLasso}
 \alias{plot.clogitLasso}
-\title{Plot coefficients from a \code{clogitLasso} object}
+\title{Plots coefficients from a \code{clogitLasso} object}
 \usage{
 plot.clogitLasso(x, logLambda = TRUE, add.legend = FALSE,
   add.labels = TRUE, lty = 1:ncol(x$beta), col = 1:ncol(x$beta), ...)
@@ -25,6 +25,9 @@ plot.clogitLasso(x, logLambda = TRUE, add.legend = FALSE,
 \description{
 Plot the parameter profile associated \code{clogitLasso} object
 }
+\details{
+IPFStructPenalty
+}
 \examples{
 \dontrun{
  # generate data
@@ -40,7 +43,4 @@ Plot the parameter profile associated \code{clogitLasso} object
 \references{
 Avalos, M., Pouyes, H., Grandvalet, Y., Orriols, L., & Lagarde, E. (2015). \emph{Sparse conditional logistic
  regression for analyzing large-scale matched data from epidemiological studies: a simple algorithm.} BMC bioinformatics, 16(6), S1.  \doi{10.1186/1471-2105-16-S6-S1}.
-}
-\author{
-Marta Avalos, Helene Pouyes, Marius Kwemou and Binbin Xu
 }

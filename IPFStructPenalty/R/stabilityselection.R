@@ -1,6 +1,8 @@
-#require(glmnet)
-#require(parallel)
-
+#' IPFStructPenalty
+#' @title Stability path for glmnet models
+#' @description
+#' he function calculates the stability path for glmnet models, e.g. the selection probabilities of the features along the range of regularization parameters. See the \code{R} package \pkg{c060} for details.
+#' @export
 stabpath <- function(y,x,size=0.632,steps=100,weakness=1,mc.cores=getOption("mc.cores", 2L),...){
   fit <- glmnet(x,y,...)
   if(class(fit)[1]=="multnet"|class(fit)[1]=="lognet") y <- as.factor(y)

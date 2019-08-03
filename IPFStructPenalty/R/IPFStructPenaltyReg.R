@@ -1,6 +1,29 @@
+#' IPFStructPenalty
+#' @title Structured penalized regression
+#' @description
+#' Function producing results of the structured penalized regression
+#' @param x,y \code{x} is the input design matrix; \code{y} is the input response matrix
+#' @param x_test,y_test \code{x} is the input validated design matrix; \code{y} is the input validated response matrix
+#' @param p the number of predictors from different data source.
+#' @param foldid an vector of values for the cross-validation.
+#' @param num.nonpen number of predictors forced to be estimated (i.e., nonpenalization).
+#' @param method specify the the method searching by the epsgo algorithm. The default method is \code{IPF-lasso}. Other options are \code{lasso}, \code{elastic-net}, \code{sIPF-elastic-net}, \code{IPF-elastic-net}, \code{tree-lasso}, \code{IPF-tree-lasso} and \code{clogitLasso}. 
+#' @param lambda optional user-supplied \code{lambda} sequence; default is NULL, and \code{espsgo} chooses its own sequence except the tree-lasso methods.
+#' @param bounds bounds for the interval-searching parameters
+#' @param strata stratification variable for the Cox survival model.
+#' @param search.path save the visited points, default is \code{FALSE}.
+#' @param EI.eps he convergence threshold for the expected improvement between fmin and the updated point 
+#' @param fminlower minimal value for the function Q.func, default is 0.
+#' @param threshold threshold for estimated coefficients of the tree-lasso methods.
+#' @param N define the number of start points depending on the dimensionality of the parameter space.
+#' @param min.iter the minimus iterations after the initial \code{N} iterations.
+#' @param seed random seed.
+#' @param parallel If \code{TRUE}, use parallel foreach to fit each fold except parallelizing each lambda for the tree-lasso methods. If \code{c(TRUE,TRUE)}, use parallel foreach to fit each fold and each lambda. 
+#' @param verbose print the middle search information, default is \code{TRUE}.
+#' @export
 IPFStructPenaltyReg <- function(x, y, x_test=NULL, y_test=NULL, p, foldid, num.nonpen=0, method="IPF-lasso", 
                         lambda=NULL, bounds=NULL, strata=NULL, search.path=FALSE, EI.eps=0.01, fminlower = 0,
-                        threshold=0, N=NULL, min.iter=20, seed=1234,parallel=FALSE, verbose=TRUE){
+                        threshold=0, N=NULL, min.iter=20, seed=1234,parallel=FALSE, verbose=TRUE,...){
   if((method!="lasso") & (method!="tree-lasso") & is.null(bounds)){
     if(method=="elastic-net"){
       bounds <- t(data.frame(alpha=c(0,1)))

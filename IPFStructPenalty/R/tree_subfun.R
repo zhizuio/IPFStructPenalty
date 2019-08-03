@@ -1,3 +1,6 @@
+###########################
+## All subfunctions for the tree-lasso and IPF-tree-lass methods.
+###########################
 accgrad <- function(y, x, lambda, Tree, C, g_idx, TauNorm,  mu, option, num.nonpen=0, intercept=TRUE){
   
   #Y Centered Matrix: N by K

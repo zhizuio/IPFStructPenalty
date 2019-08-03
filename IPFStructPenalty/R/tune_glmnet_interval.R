@@ -1,3 +1,8 @@
+#' IPFStructPenalty
+#' @title Wrapper function for glmnet objects.
+#' @description
+#' Wrapper function for glmnet objects used by epsgo function. This function is mainly used within the function \code{epsgo}. See the \code{R} package \pkg{c060} for details.
+#' @export
 tune.glmnet.interval<-function(parms, x, y,
                                          weights, 
                                          x_test=NULL,

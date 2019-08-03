@@ -1,3 +1,8 @@
+#' IPFStructPenalty
+#' @title function to highlight the path of a pre-specified set of variables within the coefficient path
+#' @description
+#' Creates several plots showing the coefficient path for the final model of a \code{cv.glmnet} fit and highlights the path of a pre-specified set of variables within the coefficient path. See the \code{R} package  \pkg{penalizedSVM} for details.
+#' @export
 Plot.coef.glmnet <- function(cvfit, betas){
 
 op <- par(no.readonly = TRUE)
