@@ -10,7 +10,7 @@ You can download the package and install it locally, or install it from github d
 library(devtools)
 devtools::install_github("zhizuio/IPFStructPenalty/IPFStructPenalty")
 ```
-See the file `test.R` for s simple start with simulated data. The scripts `Sim_reg.R` and `GDSC_reg.R` are for simulation study and analyzing real data, respectively, presented in [Zhao \& Zucknick (2019)](https://arxiv.org/abs/1902.04996)..
+See the file `test.R` for s simple start with simulated data. The scripts `Sim_reg.R` and `GDSC_reg.R` are for simulation study and analyzing real data, respectively, presented in [Zhao \& Zucknick (2019)](https://arxiv.org/abs/1902.04996). The original runnings were on HPC. They will be every slow to be run on PC.
 
 ## Reference
 The pre-print has been arXived [Zhao \& Zucknick (2019)](https://arxiv.org/abs/1902.04996): https://arxiv.org/abs/1902.04996.
