@@ -10,8 +10,43 @@ tune.clogit.interval(parms, x = x, y = y, x_test = NULL,
   p = NULL, parallel = FALSE, verbose = FALSE, search.path = FALSE,
   ...)
 }
+\arguments{
+\item{x, y}{input matrix.}
+
+\item{strata}{stratification variable for the Cox survival model.}
+
+\item{lambda}{optional user-supplied \code{lambda} sequence; default is NULL, and \code{espsgo} chooses its own sequence.}
+
+\item{foldid}{an vector of values for the cross-validation.}
+
+\item{seed}{random seed}
+
+\item{standardize.response}{standardization for the response variables. Default: \code{TRUE}.}
+
+\item{p}{the number of predictors from different data source.}
+
+\item{parallel}{If \code{TRUE}, use parallel foreach to fit each fold except parallelizing each lambda for the tree-lasso methods. If \code{c(TRUE,TRUE)}, use parallel foreach to fit each fold and each lambda.}
+
+\item{verbose}{print the middle search information, default is \code{TRUE}.}
+
+\item{family}{response type.}
+
+\item{intercept}{should  intercept(s) be fitted (default=\code{TRUE}) or set to zero (\code{FALSE}).}
+}
+\value{
+An object with list "\code{tune.clogit.interval}"
+\item{q.val}{the minimum MSE (or minus likelihood for the Cox model) through the cross-validation}
+\item{model}{some model related quantities:
+\itemize{alpha }{ the optimzed alpha}
+\itemize{lambda}{ the optimzed (first) lambda}
+\itemize{ipf   }{ the optimzed penalty factors}
+\itemize{p     }{ a vector of the numbers of features from multiple data sources}
+\itemize{nfolds}{ number of folds used for the cross-validation}
+\itemize{cvreg }{ the cross-validation results}
+}
+}
 \description{
-Wrapper function for conditional logistic lasso objects used by epsgo function. This function is mainly used within the function \code{epsgo}. See the \code{R} package \pkg{c060} for details.
+Wrapper function for conditional logistic lasso objects optized based on the full likelihood by the EPSGO algorithm. This function is mainly used within the function \code{epsgo}.
 }
 \details{
 IPFStructPenalty

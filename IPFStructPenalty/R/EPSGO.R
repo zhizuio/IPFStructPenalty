@@ -58,14 +58,15 @@ epsgo<- function(
 								# do you want to find one min value and stop?
 								flag.find.one.min =FALSE,
 								# show plots ?   none, final iteration, all iterations 
-								show=c("none", "final", "all"),
+								#show=c("none", "final", "all"),
+								show="none",
 								# define the number of start points
 								N= NULL, 
 								#% maximum # of function evaluations 
 								maxevals =   500,
                 constantMean=0,
                 #% convergent condition
-                epsilon =   0.01,
+                epsilon = 1e-4,
 								Dir.ep = 1e-4,
 								Dir.tol = 0.01,
 								# threshold different of improvement between fmin and the updated point 
@@ -123,8 +124,7 @@ epsgo<- function(
 	  print("parms.coding")
 	  print(parms.coding)
 	}
-	
-	
+	 
 	###################################################################################################################
 		## 1. ## number of tuning patameters D = dim(P)
 	###################################################################################################################

@@ -7,7 +7,7 @@
 #' @param p the number of predictors from different data source.
 #' @param foldid an vector of values for the cross-validation.
 #' @param num.nonpen number of predictors forced to be estimated (i.e., nonpenalization).
-#' @param method specify the the method searching by the epsgo algorithm. The default method is \code{IPF-lasso}. Other options are \code{lasso}, \code{elastic-net}, \code{sIPF-elastic-net}, \code{IPF-elastic-net}, \code{tree-lasso}, \code{IPF-tree-lasso} and \code{clogitLasso}. 
+#' @param method specify the the method to optimize its penalty parameters. The penalty parameters of \code{elastic-net}, \code{IPF-lasso}, \code{sIPF-elastic-net}, \code{IPF-elastic-net}, \code{IPF-tree-lasso} and \code{clogitLasso} are optimzed by the EPSGO algorithm. The penalty parameter of \code{lasso} and \code{tree-lasso} is optimzed by cross-validation. The default method is \code{IPF-lasso} 
 #' @param lambda optional user-supplied \code{lambda} sequence; default is NULL, and \code{espsgo} chooses its own sequence except the tree-lasso methods.
 #' @param bounds bounds for the interval-searching parameters
 #' @param strata stratification variable for the Cox survival model.
@@ -20,6 +20,17 @@
 #' @param seed random seed.
 #' @param parallel If \code{TRUE}, use parallel foreach to fit each fold except parallelizing each lambda for the tree-lasso methods. If \code{c(TRUE,TRUE)}, use parallel foreach to fit each fold and each lambda. 
 #' @param verbose print the middle search information, default is \code{TRUE}.
+#' @return An object of list "\code{IPFStructPenaltyReg}" is returned:
+#'  \item{cvm}{the mean cross-validated error}  
+#'  \item{cvm_cv}{the mean cross-validated error if providing external dataset "\code{x_test}" and "\code{y_test}". } 
+#'  \item{alpha}{optimized \code{alpha}}  
+#'  \item{lambda}{optimized \code{lambda}}  
+#'  \item{pred}{the prediction of the responses}  
+#'  \item{ipf}{optimzed penalty factors}  
+#'  \item{Beta}{estimate of the coefficients}  
+#'  \item{cv}{number of nonzero coefficients}  
+#' 
+#' @references Zhao, Z. & Zucknick, M. (2019). \emph{Stuctured penalized regression for drug sensitivity prediction.} arXiv: 1905.00095.
 #' @export
 IPFStructPenaltyReg <- function(x, y, x_test=NULL, y_test=NULL, p, foldid, num.nonpen=0, method="IPF-lasso", 
                         lambda=NULL, bounds=NULL, strata=NULL, search.path=FALSE, EI.eps=0.01, fminlower = 0,
@@ -91,7 +102,7 @@ IPFStructPenaltyReg <- function(x, y, x_test=NULL, y_test=NULL, p, foldid, num.n
     fit <- epsgo(Q.func = "tune.glmnet.interval", bounds = bounds, lambda=lambda, N=N,
                  parms.coding = "none", seed = seed, fminlower = fminlower, x = x, y = y, num.nonpen=num.nonpen,
                  family = "gaussian", foldid = foldid, type.min = "lambda.min", p=p, intercept=T, standardize.response=F,
-                 type.measure = "mse", epsilon=0.0001, min.iter=min.iter, verbose=verbose, parallel=parallel, EI.eps=EI.eps)
+                 type.measure = "mse", min.iter=min.iter, verbose=verbose, parallel=parallel, EI.eps=EI.eps, ...)
     sumint <- summary(fit, verbose=F)
     mse_cv <- sumint$opt.error
     alpha <- sumint$opt.alpha
@@ -114,7 +125,7 @@ IPFStructPenaltyReg <- function(x, y, x_test=NULL, y_test=NULL, p, foldid, num.n
     fit <- epsgo(Q.func = "tune.glmnet.interval", bounds = bounds, lambda=lambda, N=N,
                  parms.coding = "none", seed = seed, fminlower = fminlower, x = x, y = y, num.nonpen=num.nonpen,
                  family = "gaussian", foldid = foldid, type.min = "lambda.min", p=p, intercept=T, standardize.response=F,
-                 type.measure = "mse", epsilon=0.0001, min.iter=min.iter, verbose=verbose, parallel=parallel, EI.eps=EI.eps)
+                 type.measure = "mse", min.iter=min.iter, verbose=verbose, parallel=parallel, EI.eps=EI.eps, ...)
     sumint <- summary(fit, verbose=F)
     mse_cv <- sumint$opt.error
     alpha <- sumint$opt.alpha
@@ -149,7 +160,7 @@ IPFStructPenaltyReg <- function(x, y, x_test=NULL, y_test=NULL, p, foldid, num.n
     fit <- epsgo(Q.func = "tune.glmnet.interval", bounds = bounds, lambda=lambda,  N=N,
                  parms.coding = "none", seed = seed, fminlower = fminlower, x = x, y = y, num.nonpen=num.nonpen,
                  family = "gaussian", foldid = foldid, type.min = "lambda.min", p=p, intercept=T, standardize.response=F,
-                 type.measure = "mse", epsilon=0.0001, min.iter=min.iter, verbose=verbose, parallel=parallel, search.path=T, EI.eps=EI.eps)
+                 type.measure = "mse", min.iter=min.iter, verbose=verbose, parallel=parallel, search.path=T, EI.eps=EI.eps, ...)
     sumint <- summary(fit, verbose=F)
     mse_cv <- sumint$opt.error
     alpha <- sumint$opt.alpha
@@ -257,7 +268,7 @@ IPFStructPenaltyReg <- function(x, y, x_test=NULL, y_test=NULL, p, foldid, num.n
     fit <- epsgo(Q.func = "tune.tree.interval", bounds = bounds, lambda=lambda, N=N,
                  parms.coding = "none", seed = seed, fminlower = fminlower, x = x, y = y, 
                  intercept=TRUE, foldid = foldid, p=p, standardize.response=F, num.nonpen=num.nonpen,
-                 epsilon=0.0001, min.iter=min.iter, verbose=verbose, parallel=parallel, EI.eps=EI.eps, threshold=threshold)
+                 min.iter=min.iter, verbose=verbose, parallel=parallel, EI.eps=EI.eps, threshold=threshold, ...)
     sumint <- summary(fit, verbose=F)
     
     ipf <- sumint$opt.ipf
@@ -277,13 +288,13 @@ IPFStructPenaltyReg <- function(x, y, x_test=NULL, y_test=NULL, p, foldid, num.n
   }
   
   #==================
-  # Tree-IPF-lasso
+  # conditional logistic-lasso
   #==================
   if(method=="clogitLasso"){
     fit <- epsgo(Q.func = "tune.clogit.interval", strata=strata, bounds = bounds, lambda=lambda, N=N,
                  parms.coding = "none", seed = seed, fminlower = fminlower, x = x, y = y,
-                 foldid = foldid, p=p, epsilon=0.0001, min.iter=min.iter, 
-                 verbose=verbose, parallel=parallel, EI.eps=EI.eps)
+                 foldid = foldid, p=p, min.iter=min.iter, 
+                 verbose=verbose, parallel=parallel, EI.eps=EI.eps, ...)
     sumint <- summary(fit, verbose=F)
     mse_cv <- sumint$opt.error
     lambda <- sumint$opt.lambda

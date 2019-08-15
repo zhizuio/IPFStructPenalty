@@ -8,7 +8,7 @@ IPFStructPenaltyReg(x, y, x_test = NULL, y_test = NULL, p, foldid,
   num.nonpen = 0, method = "IPF-lasso", lambda = NULL,
   bounds = NULL, strata = NULL, search.path = FALSE, EI.eps = 0.01,
   fminlower = 0, threshold = 0, N = NULL, min.iter = 20,
-  seed = 1234, parallel = FALSE, verbose = TRUE)
+  seed = 1234, parallel = FALSE, verbose = TRUE, ...)
 }
 \arguments{
 \item{x, y}{\code{x} is the input design matrix; \code{y} is the input response matrix}
@@ -21,7 +21,7 @@ IPFStructPenaltyReg(x, y, x_test = NULL, y_test = NULL, p, foldid,
 
 \item{num.nonpen}{number of predictors forced to be estimated (i.e., nonpenalization).}
 
-\item{method}{specify the the method searching by the epsgo algorithm. The default method is \code{IPF-lasso}. Other options are \code{lasso}, \code{elastic-net}, \code{sIPF-elastic-net}, \code{IPF-elastic-net}, \code{tree-lasso}, \code{IPF-tree-lasso} and \code{clogitLasso}.}
+\item{method}{specify the the method to optimize its penalty parameters. The penalty parameters of \code{elastic-net}, \code{IPF-lasso}, \code{sIPF-elastic-net}, \code{IPF-elastic-net}, \code{IPF-tree-lasso} and \code{clogitLasso} are optimzed by the EPSGO algorithm. The penalty parameter of \code{lasso} and \code{tree-lasso} is optimzed by cross-validation. The default method is \code{IPF-lasso}}
 
 \item{lambda}{optional user-supplied \code{lambda} sequence; default is NULL, and \code{espsgo} chooses its own sequence except the tree-lasso methods.}
 
@@ -47,9 +47,23 @@ IPFStructPenaltyReg(x, y, x_test = NULL, y_test = NULL, p, foldid,
 
 \item{verbose}{print the middle search information, default is \code{TRUE}.}
 }
+\value{
+An object of list "\code{IPFStructPenaltyReg}" is returned:
+ \item{cvm}{the mean cross-validated error}  
+ \item{cvm_cv}{the mean cross-validated error if providing external dataset "\code{x_test}" and "\code{y_test}". } 
+ \item{alpha}{optimized \code{alpha}}  
+ \item{lambda}{optimized \code{lambda}}  
+ \item{pred}{the prediction of the responses}  
+ \item{ipf}{optimzed penalty factors}  
+ \item{Beta}{estimate of the coefficients}  
+ \item{cv}{number of nonzero coefficients}
+}
 \description{
 Function producing results of the structured penalized regression
 }
 \details{
 IPFStructPenalty
+}
+\references{
+Zhao, Z. & Zucknick, M. (2019). \emph{Stuctured penalized regression for drug sensitivity prediction.} arXiv: 1905.00095.
 }

@@ -1,12 +1,28 @@
-
+#' IPFStructPenalty
+#' @title Summary results
+#' @description
+#' Summarize the results from the oject of \code{epsgo}. 
+#' @return An object with list "\code{summary.intsearch}"
+#' \item{info}{the visited points of alpha, lambda, ipf and their resulting deviance and selected number of features}
+#' \item{opt.alpha}{the optimized alpha}
+#' \item{opt.lambda}{the optimized (first) lambda}
+#' \item{opt.ipf}{the optimized penalty factors}
+#' \item{opt.model}{the optimized model}
+#' \itemize{alpha }{ the optimzed alpha}
+#' \itemize{lambda}{ the optimzed (first) lambda}
+#' \itemize{ipf   }{ the optimzed penalty factors}
+#' \itemize{p     }{ a vector of the numbers of features from multiple data sources}
+#' \itemize{nfolds}{ number of folds used for the cross-validation}
+#' \itemize{cvreg }{ the cross-validation results}
+#' }
+#' @export
 ###########################################################################################################
 summary.intsearch<-function(object,digits = max(3, getOption("digits") - 3), verbose=TRUE, first.n=5, ...){
   fit <- object
   lambdas <- unlist(sapply(sapply(fit$model, "[", "model"), "[", "lambda"))
-  
   if(!identical(grep("tree",names(fit$model.list[[1]]$model$ipf)[1]), integer(0))){
-    fit <- object
-    lambdas <- unlist(sapply(sapply(fit$model, "[", "model"), "[", "lambda"))
+    #fit <- object
+    #lambdas <- unlist(sapply(sapply(fit$model, "[", "model"), "[", "lambda"))
     ipf <- data.matrix(fit$Xtrain)
     deviances <- fit$Ytrain
     opt.lambda <- lambdas[which.min(deviances)]
@@ -29,8 +45,8 @@ summary.intsearch<-function(object,digits = max(3, getOption("digits") - 3), ver
     }
     invisible(out)
   }else{
-    fit <- object
-    lambdas <- unlist(sapply(sapply(fit$model, "[", "model"), "[", "lambda"))
+    #fit <- object
+    #lambdas <- unlist(sapply(sapply(fit$model, "[", "model"), "[", "lambda"))
     if(identical(grep("alpha",colnames(fit$Xtrain)), integer(0))){
       fit$Xtrain <- data.frame(alpha=rep(1,dim(fit$Xtrain)[1]), fit$Xtrain)
       colnames(fit$Xtrain)[1] <- "alpha"
@@ -45,14 +61,12 @@ summary.intsearch<-function(object,digits = max(3, getOption("digits") - 3), ver
     deviances <- fit$Ytrain
     
     # optimal models   
-    opt.models <- sapply(fit$model.list, "[", "model") [fit$Ytrain == fit$fmin ]
+    opt.models <- sapply(fit$model.list, "[", "model") [which.min(fit$Ytrain)]
     if(length(grep("alpha",colnames(fit$Xtrain)))==1){
       if(names(fit$model[[1]]$model$cvreg)[1]!="cvl"){
         tmp.models<-sapply(sapply(sapply(fit$model, "[", "model"), "[", "cvreg"), "[", "glmnet.fit")
         n.features<-mapply(function(List, lam) List$df[which(List$lambda %in% lam)], tmp.models, lambdas)
       }else{
-        lambdas <- unlist(sapply(sapply(fit$model, "[", "model"), "[", "alpha"))
-        n.features<-NA
         tmp.models<-sapply(sapply(sapply(fit$model, "[", "model"), "[", "cvreg"), "[", "fullfit")
         n.features<-mapply(function(List) sum(List@penalized[-1]!=0), tmp.models)
       }

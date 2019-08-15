@@ -1,7 +1,28 @@
 #' IPFStructPenalty
 #' @title Wrapper function for conditional logistic lasso objects.
 #' @description
-#' Wrapper function for conditional logistic lasso objects used by epsgo function. This function is mainly used within the function \code{epsgo}. See the \code{R} package \pkg{c060} for details.
+#' Wrapper function for conditional logistic lasso objects optized based on the full likelihood by the EPSGO algorithm. This function is mainly used within the function \code{epsgo}. 
+#' @param x,y input matrix.
+#' @param family response type.
+#' @param lambda optional user-supplied \code{lambda} sequence; default is NULL, and \code{espsgo} chooses its own sequence.
+#' @param intercept should  intercept(s) be fitted (default=\code{TRUE}) or set to zero (\code{FALSE}).
+#' @param strata stratification variable for the Cox survival model.
+#' @param foldid an vector of values for the cross-validation.
+#' @param standardize.response standardization for the response variables. Default: \code{TRUE}.
+#' @param p the number of predictors from different data source.
+#' @param verbose print the middle search information, default is \code{TRUE}.
+#' @param seed random seed
+#' @param parallel If \code{TRUE}, use parallel foreach to fit each fold except parallelizing each lambda for the tree-lasso methods. If \code{c(TRUE,TRUE)}, use parallel foreach to fit each fold and each lambda.
+#' @return An object with list "\code{tune.clogit.interval}"
+#' \item{q.val}{the minimum MSE (or minus likelihood for the Cox model) through the cross-validation}
+#' \item{model}{some model related quantities:
+#' \itemize{alpha }{ the optimzed alpha}
+#' \itemize{lambda}{ the optimzed (first) lambda}
+#' \itemize{ipf   }{ the optimzed penalty factors}
+#' \itemize{p     }{ a vector of the numbers of features from multiple data sources}
+#' \itemize{nfolds}{ number of folds used for the cross-validation}
+#' \itemize{cvreg }{ the cross-validation results}
+#' }
 #' @export
 tune.clogit.interval<-function(parms, x=x, y=y,
                                          x_test=NULL,
@@ -22,6 +43,7 @@ tune.clogit.interval<-function(parms, x=x, y=y,
   set.seed(seed)
   X <- data.matrix(x)
   y <- data.matrix(y)
+  resp <- Surv(y[,1], event= y[,2])
   if(is.null(p) | length(p)==1) stop("The argument p must be a vector!")
   if(is.null(lambda)) stop("No given lambda sequence!")
   lambda <- matrix(lambda,ncol=1)
@@ -53,7 +75,6 @@ tune.clogit.interval<-function(parms, x=x, y=y,
     
     lambda1 <- rep(la, p[1])
     for(i in 2:length(p)) lambda1 <- c(lambda1, rep(la,p[i])*ipf[i-1])
-    resp <- Surv(y[,1], event= y[,2])
     fit.loglik <- cvl(resp~strata, X, lambda1=lambda1, lambda2=alpha, model="cox", fold=foldid)$fullfit@loglik
     return(fit.loglik)
     
@@ -80,14 +101,13 @@ tune.clogit.interval<-function(parms, x=x, y=y,
   }
 
 
-  opt.lambda<-lambda[which.max(cvm)]
-  # q.val= mean cross-validated error over the folds
-  q.val<-max(cvm)
+  opt.lambda<-lambda[which.min(-cvm)]
+  # q.val= minus full likelihood over the folds
+  q.val<-min(-cvm)
   
-  lambda1 <- rep(lambda, p[1])
+  lambda1 <- rep(opt.lambda, p[1])
   for(i in 2:length(p)) lambda1 <- c(lambda1, rep(opt.lambda,p[i])*ipf[i-1])
-  resp <- Surv(y[,1], event= y[,2])
-  cv <- cvl(resp~strata, X, lambda1=opt.lambda, lambda2=alpha, model="cox", fold=foldid)
+  cv <- cvl(resp~strata, X, lambda1=lambda1, lambda2=alpha, model="cox", fold=foldid)
   
   
   if(!search.path){
