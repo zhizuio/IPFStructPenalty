@@ -16,11 +16,15 @@ See the file `test.R` for s simple start with simulated data. The scripts `Sim_r
 The pre-print has been arXived [Zhao \& Zucknick (2019)](https://arxiv.org/abs/1902.04996): https://arxiv.org/abs/1902.04996.
 
 ## Update
-### New in the version IPFStructPenalty_0.1.2.tar.gz (02 August 2019):
+### New in the version IPFStructPenalty_0.1.3.tar.gz (15 August 2019):
+
+Some bugs for the conditional logistic lasso have been fixed.
+
+### The version IPFStructPenalty_0.1.2.tar.gz (02 August 2019):
 
 The help files of functions have been updated.
 
-### New in the version IPFStructPenalty_0.1.1.tar.gz (01 August 2019):
+### The version IPFStructPenalty_0.1.1.tar.gz (01 August 2019):
 
 1) The `DESCRIPTION` file has been updated.
 
