@@ -1,8 +1,8 @@
 Package: IPFStructPenalty
 Type: Package
 Title: Structured multiresponse penalized regression
-Version: 0.1.3
-Date: 2019-08-13
+Version: 0.1.4
+Date: 2019-08-21
 Authors@R: c(person("Zhi", "Zhao", email = "zhi.zhao@medisin.uio.no", role = c("aut","cre")), person("Manuela", "Zucknick", email = "manuela.zucknick@medisin.uio.no", role = c("aut")))
 Maintainer@R: c(person("Zhi", "Zhao", email =
         "zhi.zhao@medisin.uio.no", role = c("aut","cre")))
@@ -14,7 +14,7 @@ Depends: R (>= 3.2), doParallel, glmnet, tgp, penalizedSVM, penalized
 Encoding: UTF-8
 LazyData: true
 NeedsCompilation: no
-Packaged: 2019-08-15 14:20:36 UTC; zhiz
+Packaged: 2019-08-21 07:54:21 UTC; zhiz
 Author: Zhi Zhao [aut, cre],
   Manuela Zucknick [aut]
 Maintainer: Zhi Zhao <zhi.zhao@medisin.uio.no>

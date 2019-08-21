@@ -6,9 +6,10 @@
 \usage{
 IPFStructPenaltyReg(x, y, x_test = NULL, y_test = NULL, p, foldid,
   num.nonpen = 0, method = "IPF-lasso", lambda = NULL,
-  bounds = NULL, strata = NULL, search.path = FALSE, EI.eps = 0.01,
-  fminlower = 0, threshold = 0, N = NULL, min.iter = 20,
-  seed = 1234, parallel = FALSE, verbose = TRUE, ...)
+  bounds = NULL, strata.surv = NULL, search.path = FALSE,
+  EI.eps = 0.01, fminlower = 0, threshold = 0, N = NULL,
+  min.iter = 20, seed = 1234, parallel = FALSE, verbose = TRUE,
+  ...)
 }
 \arguments{
 \item{x, y}{\code{x} is the input design matrix; \code{y} is the input response matrix}
@@ -27,7 +28,7 @@ IPFStructPenaltyReg(x, y, x_test = NULL, y_test = NULL, p, foldid,
 
 \item{bounds}{bounds for the interval-searching parameters}
 
-\item{strata}{stratification variable for the Cox survival model.}
+\item{strata.surv}{stratification variable for the Cox survival model.}
 
 \item{search.path}{save the visited points, default is \code{FALSE}.}
 

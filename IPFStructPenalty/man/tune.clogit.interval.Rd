@@ -5,7 +5,7 @@
 \title{Wrapper function for conditional logistic lasso objects.}
 \usage{
 tune.clogit.interval(parms, x = x, y = y, x_test = NULL,
-  y_test = NULL, strata = NULL, lambda = NULL, nfolds = 3,
+  y_test = NULL, strata.surv = NULL, lambda = NULL, nfolds = 3,
   foldid = NULL, seed = 12345, standardize.response = FALSE,
   p = NULL, parallel = FALSE, verbose = FALSE, search.path = FALSE,
   ...)
@@ -13,7 +13,7 @@ tune.clogit.interval(parms, x = x, y = y, x_test = NULL,
 \arguments{
 \item{x, y}{input matrix.}
 
-\item{strata}{stratification variable for the Cox survival model.}
+\item{strata.surv}{stratification variable for the Cox survival model.}
 
 \item{lambda}{optional user-supplied \code{lambda} sequence; default is NULL, and \code{espsgo} chooses its own sequence.}
 
@@ -37,12 +37,12 @@ tune.clogit.interval(parms, x = x, y = y, x_test = NULL,
 An object with list "\code{tune.clogit.interval}"
 \item{q.val}{the minimum MSE (or minus likelihood for the Cox model) through the cross-validation}
 \item{model}{some model related quantities:
-\itemize{alpha }{ the optimzed alpha}
-\itemize{lambda}{ the optimzed (first) lambda}
-\itemize{ipf   }{ the optimzed penalty factors}
-\itemize{p     }{ a vector of the numbers of features from multiple data sources}
-\itemize{nfolds}{ number of folds used for the cross-validation}
-\itemize{cvreg }{ the cross-validation results}
+\itemize{\code{alpha  }}{the optimzed alpha}
+\itemize{\code{lambda }}{the optimzed (first) lambda}
+\itemize{\code{ipf    }}{the optimzed penalty factors}
+\itemize{\code{p      }}{a vector of the numbers of features from multiple data sources}
+\itemize{\code{nfolds }}{number of folds used for the cross-validation}
+\itemize{\code{cvreg  }}{the cross-validation results}
 }
 }
 \description{

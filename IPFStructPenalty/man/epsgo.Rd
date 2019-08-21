@@ -6,7 +6,7 @@
 \usage{
 epsgo(Q.func, bounds, x, y, family = "gaussian", lambda = NULL,
   p = NULL, intercept = TRUE, foldid = NULL, num.nonpen = 0,
-  strata = NULL, threshold = 0, standardize.response = FALSE,
+  strata.surv = NULL, threshold = 0, standardize.response = FALSE,
   round.n = 5, parms.coding = "none", fminlower = 0,
   flag.find.one.min = FALSE, show = "none", N = NULL,
   maxevals = 500, constantMean = 0, epsilon = 1e-04,
@@ -34,7 +34,7 @@ epsgo(Q.func, bounds, x, y, family = "gaussian", lambda = NULL,
 
 \item{num.nonpen}{number of predictors forced to be estimated (i.e., nonpenalization).}
 
-\item{strata}{stratification variable for the Cox survival model.}
+\item{strata.surv}{stratification variable for the Cox survival model.}
 
 \item{threshold}{threshold for estimated coefficients of the tree-lasso models.}
 

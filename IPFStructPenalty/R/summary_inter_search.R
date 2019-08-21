@@ -14,7 +14,6 @@
 #' \itemize{p     }{ a vector of the numbers of features from multiple data sources}
 #' \itemize{nfolds}{ number of folds used for the cross-validation}
 #' \itemize{cvreg }{ the cross-validation results}
-#' }
 #' @export
 ###########################################################################################################
 summary.intsearch<-function(object,digits = max(3, getOption("digits") - 3), verbose=TRUE, first.n=5, ...){

@@ -6,7 +6,7 @@
 #' @param family response type.
 #' @param lambda optional user-supplied \code{lambda} sequence; default is NULL, and \code{espsgo} chooses its own sequence.
 #' @param intercept should  intercept(s) be fitted (default=\code{TRUE}) or set to zero (\code{FALSE}).
-#' @param strata stratification variable for the Cox survival model.
+#' @param strata.surv stratification variable for the Cox survival model.
 #' @param foldid an vector of values for the cross-validation.
 #' @param standardize.response standardization for the response variables. Default: \code{TRUE}.
 #' @param p the number of predictors from different data source.
@@ -16,18 +16,18 @@
 #' @return An object with list "\code{tune.clogit.interval}"
 #' \item{q.val}{the minimum MSE (or minus likelihood for the Cox model) through the cross-validation}
 #' \item{model}{some model related quantities:
-#' \itemize{alpha }{ the optimzed alpha}
-#' \itemize{lambda}{ the optimzed (first) lambda}
-#' \itemize{ipf   }{ the optimzed penalty factors}
-#' \itemize{p     }{ a vector of the numbers of features from multiple data sources}
-#' \itemize{nfolds}{ number of folds used for the cross-validation}
-#' \itemize{cvreg }{ the cross-validation results}
+#' \itemize{\code{alpha  }}{the optimzed alpha}
+#' \itemize{\code{lambda }}{the optimzed (first) lambda}
+#' \itemize{\code{ipf    }}{the optimzed penalty factors}
+#' \itemize{\code{p      }}{a vector of the numbers of features from multiple data sources}
+#' \itemize{\code{nfolds }}{number of folds used for the cross-validation}
+#' \itemize{\code{cvreg  }}{the cross-validation results}
 #' }
 #' @export
 tune.clogit.interval<-function(parms, x=x, y=y,
                                          x_test=NULL,
                                          y_test=NULL,
-                                         strata=NULL,
+                                         strata.surv=NULL,
                                          lambda = NULL,
                                          nfolds = 3,
                                          foldid =NULL,
@@ -43,14 +43,14 @@ tune.clogit.interval<-function(parms, x=x, y=y,
   set.seed(seed)
   X <- data.matrix(x)
   y <- data.matrix(y)
-  resp <- Surv(y[,1], event= y[,2])
+  
   if(is.null(p) | length(p)==1) stop("The argument p must be a vector!")
   if(is.null(lambda)) stop("No given lambda sequence!")
   lambda <- matrix(lambda,ncol=1)
   if(!is.null(foldid)){
     nfolds <- max(foldid)
   }else{
-    foldid <- rep(sample(rep(seq(nfolds),length(table(strata))/nfolds)), each=2)
+    foldid <- rep(sample(rep(seq(nfolds),length(table(strata.surv))/nfolds)), each=2)
   }
   
   if(!identical(grep("alpha", names(parms)), integer(0))){
@@ -71,33 +71,31 @@ tune.clogit.interval<-function(parms, x=x, y=y,
   #  2. find optimal lambda for given alpha (lambda2) and penalty factors ###########################
   # find optimal lambda1 for given alpha (lambda2)
   
-  CV_k <- function(la){
-    
+  cv.k <- function(la){
     lambda1 <- rep(la, p[1])
     for(i in 2:length(p)) lambda1 <- c(lambda1, rep(la,p[i])*ipf[i-1])
-    fit.loglik <- cvl(resp~strata, X, lambda1=lambda1, lambda2=alpha, model="cox", fold=foldid)$fullfit@loglik
+    resp <- Surv(y[,1], event= y[,2])
+    strata.surv
+    fit.loglik <- cvl(resp~strata.surv, X, lambda1=lambda1, lambda2=alpha, model="cox", fold=foldid)$fullfit@loglik
     return(fit.loglik)
-    
   }
   
   if(sum(parallel)){
       cvm <- numeric(length(lambda))
-      cl <- makeCluster(min(length(lambda),15))
-      clusterEvalQ(cl, library(iterators))
-      clusterEvalQ(cl, library(foreach))
-      clusterEvalQ(cl, library(doParallel))
-      clusterEvalQ(cl, library(penalized))
+      nCores <- min(length(lambda),16,detectCores()-1)
+      cl <- makeCluster(nCores)
+      clusterEvalQ(cl, library(IPFStructPenalty))
       registerDoParallel(cl)
-      cvm[1:min(length(lambda),15)] <- foreach(i = 1:min(length(lambda),15), .combine=c, .packages= c('base','Matrix','MASS')) %dopar%{
-        CV_k(lambda[i])
+      cvm[1:min(length(lambda),nCores)] <- foreach(i = 1:min(length(lambda),nCores), .combine=c, .packages= c('base','Matrix','MASS')) %dopar%{
+        cv.k(lambda[i])
       }
       stopCluster(cl)
       
-      if(length(lambda)>15){
-        cvm[(15+1):length(lambda)]<-apply(matrix(lambda[(15+1):length(lambda)],ncol=1), 1, CV_k)
+      if(length(lambda)>nCores){
+        cvm[(nCores+1):length(lambda)]<-apply(matrix(lambda[(nCores+1):length(lambda)],ncol=1), 1, cv.k)
       }
     }else{
-    cvm<-apply(lambda, 1, CV_k)
+    cvm<-apply(lambda, 1, cv.k)
   }
 
 
@@ -107,7 +105,8 @@ tune.clogit.interval<-function(parms, x=x, y=y,
   
   lambda1 <- rep(opt.lambda, p[1])
   for(i in 2:length(p)) lambda1 <- c(lambda1, rep(opt.lambda,p[i])*ipf[i-1])
-  cv <- cvl(resp~strata, X, lambda1=lambda1, lambda2=alpha, model="cox", fold=foldid)
+  resp <- Surv(y[,1], event= y[,2])
+  cv <- cvl(resp~strata.surv, X, lambda1=lambda1, lambda2=alpha, model="cox", fold=foldid)
   
   
   if(!search.path){

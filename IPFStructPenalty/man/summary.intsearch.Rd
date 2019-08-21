@@ -7,6 +7,20 @@
 \method{summary}{intsearch}(object, digits = max(3, getOption("digits") -
   3), verbose = TRUE, first.n = 5, ...)
 }
+\value{
+An object with list "\code{summary.intsearch}"
+\item{info}{the visited points of alpha, lambda, ipf and their resulting deviance and selected number of features}
+\item{opt.alpha}{the optimized alpha}
+\item{opt.lambda}{the optimized (first) lambda}
+\item{opt.ipf}{the optimized penalty factors}
+\item{opt.model}{the optimized model}
+\itemize{alpha }{ the optimzed alpha}
+\itemize{lambda}{ the optimzed (first) lambda}
+\itemize{ipf   }{ the optimzed penalty factors}
+\itemize{p     }{ a vector of the numbers of features from multiple data sources}
+\itemize{nfolds}{ number of folds used for the cross-validation}
+\itemize{cvreg }{ the cross-validation results}
+}
 \description{
 Summarize the results from the oject of \code{epsgo}.
 }

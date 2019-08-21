@@ -153,11 +153,6 @@ tune.glmnet.interval<-function(parms, x, y,
       cvm0 <- numeric(length(lambda))
       if(sum(parallel)==1){
         cl <- makeCluster(min(length(lambda),15))
-        
-        clusterEvalQ(cl, library(iterators))
-        clusterEvalQ(cl, library(foreach))
-        clusterEvalQ(cl, library(doParallel))
-        clusterEvalQ(cl, library(glmnet))
         clusterEvalQ(cl, library(IPFStructPenalty))
         registerDoParallel(cl)
         cvm0[1:min(length(lambda),15)] <- foreach(i = 1:min(length(lambda),15), .combine=c, .packages= c('base','Matrix','MASS')) %dopar%{

@@ -8,7 +8,7 @@
 #' @param family response type.
 #' @param lambda optional user-supplied \code{lambda} sequence; default is NULL, and \code{espsgo} chooses its own sequence.
 #' @param intercept should  intercept(s) be fitted (default=\code{TRUE}) or set to zero (\code{FALSE}).
-#' @param strata stratification variable for the Cox survival model.
+#' @param strata.surv stratification variable for the Cox survival model.
 #' @param threshold threshold for estimated coefficients of the tree-lasso models.
 #' @param foldid an vector of values for the cross-validation.
 #' @param standardize.response standardization for the response variables. Default: \code{TRUE}.
@@ -46,7 +46,7 @@ epsgo<- function(
 								# number of first nonpenalised features
 								num.nonpen = 0,
 								# vector with stratum membership of each observation for conditional logistic lasso
-								strata=NULL,
+								strata.surv=NULL,
 								# threshold for estimated coefficients of the IPF-tree-lass
 								threshold=0,
 								standardize.response=FALSE,
@@ -182,7 +182,7 @@ epsgo<- function(
 	## 3. ## compute Q(p_i), i = 1, ...,N
 	###################################################################################################################
 	
-	model.list<-apply(X, 1, eval(Q.func), parms.coding=parms.coding, x=x, y=y, strata=strata, lambda=lambda, maxevals=maxevals, seed=seed, family=family, 
+	model.list<-apply(X, 1, eval(Q.func), parms.coding=parms.coding, x=x, y=y, strata.surv=strata.surv, lambda=lambda, maxevals=maxevals, seed=seed, family=family, 
 	                    num.nonpen=num.nonpen,foldid=foldid, intercept=intercept, standardize.response=standardize.response, p=p, parallel=parallel,verbose=verbose,search.path=search.path,threshold=threshold, ...)
 	#browser()
 	# take the Q.values
@@ -280,7 +280,7 @@ epsgo<- function(
       EIold <- EImax	
 		  fminold <- fmin
 		
-			model.list.new<-apply(X, 1, eval(Q.func), parms.coding=parms.coding, x=x, y=y, strata=strata, lambda=lambda, maxevals=maxevals, seed=seed, family=family, 
+			model.list.new<-apply(X, 1, eval(Q.func), parms.coding=parms.coding, x=x, y=y, strata.surv=strata.surv, lambda=lambda, maxevals=maxevals, seed=seed, family=family, 
 		                          num.nonpen=num.nonpen,foldid=foldid, intercept=intercept, standardize.response=standardize.response, spatial=spatial, p=p, parallel=parallel,verbose=verbose,search.path=search.path,threshold=threshold, ...)
 		  
       model.list<-c(model.list, model.list.new )

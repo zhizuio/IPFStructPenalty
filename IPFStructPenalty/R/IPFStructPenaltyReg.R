@@ -10,7 +10,7 @@
 #' @param method specify the the method to optimize its penalty parameters. The penalty parameters of \code{elastic-net}, \code{IPF-lasso}, \code{sIPF-elastic-net}, \code{IPF-elastic-net}, \code{IPF-tree-lasso} and \code{clogitLasso} are optimzed by the EPSGO algorithm. The penalty parameter of \code{lasso} and \code{tree-lasso} is optimzed by cross-validation. The default method is \code{IPF-lasso} 
 #' @param lambda optional user-supplied \code{lambda} sequence; default is NULL, and \code{espsgo} chooses its own sequence except the tree-lasso methods.
 #' @param bounds bounds for the interval-searching parameters
-#' @param strata stratification variable for the Cox survival model.
+#' @param strata.surv stratification variable for the Cox survival model.
 #' @param search.path save the visited points, default is \code{FALSE}.
 #' @param EI.eps he convergence threshold for the expected improvement between fmin and the updated point 
 #' @param fminlower minimal value for the function Q.func, default is 0.
@@ -33,7 +33,7 @@
 #' @references Zhao, Z. & Zucknick, M. (2019). \emph{Stuctured penalized regression for drug sensitivity prediction.} arXiv: 1905.00095.
 #' @export
 IPFStructPenaltyReg <- function(x, y, x_test=NULL, y_test=NULL, p, foldid, num.nonpen=0, method="IPF-lasso", 
-                        lambda=NULL, bounds=NULL, strata=NULL, search.path=FALSE, EI.eps=0.01, fminlower = 0,
+                        lambda=NULL, bounds=NULL, strata.surv=NULL, search.path=FALSE, EI.eps=0.01, fminlower = 0,
                         threshold=0, N=NULL, min.iter=20, seed=1234,parallel=FALSE, verbose=TRUE,...){
   if((method!="lasso") & (method!="tree-lasso") & is.null(bounds)){
     if(method=="elastic-net"){
@@ -215,15 +215,17 @@ IPFStructPenaltyReg <- function(x, y, x_test=NULL, y_test=NULL, p, foldid, num.n
   #==================
   # Tree-lasso
   #==================
-  if(is.null(lambda)){
-    fun.lambda <- function(x,y){
-      sum(matrix(x,nrow=1)%*%(y-matrix(rep(apply(y,2,mean),each=dim(y)[1]),ncol=dim(y)[2])))
-    }
-    lambda.max <- sqrt(max(sapply(split(x, rep(1:ncol(x), each=nrow(x))), fun.lambda, y=y)))
-    lambda <- seq(lambda.max*0.1, lambda.max, length=5)
-  }
   
   if(method=="tree-lasso"){
+    if(is.null(lambda)){
+      cat("Warning: Please provide a proper lambda sequence!")
+      lambda <- seq(1,2.5,length=10)
+      # fun.lambda <- function(x,y){
+      #   sum(matrix(x,nrow=1)%*%(y-matrix(rep(apply(y,2,mean),each=dim(y)[1]),ncol=dim(y)[2])))
+      # }
+      # lambda.max <- sqrt(max(sapply(split(x, rep(1:ncol(x), each=nrow(x))), fun.lambda, y=y)))
+      # lambda <- seq(lambda.max*0.1, lambda.max, length=5)
+    }
     cvm0 <- numeric(length(lambda))
     tree.parm0 <- tree.parms(y=y)
     cv5<-function(xx,la) {sum((y[foldid==xx,] - cbind(rep(1,sum(foldid==xx)),x[foldid==xx,]) %*% tree.lasso(x=x[!foldid==xx,], y=y[!foldid==xx,],lambda=la,tree.parm=tree.parm0,num.nonpen=num.nonpen, threshold=threshold))^2)/(sum(foldid==xx)*(dim(y)[2]))}
@@ -263,7 +265,17 @@ IPFStructPenaltyReg <- function(x, y, x_test=NULL, y_test=NULL, p, foldid, num.n
   #==================
   # Tree-IPF-lasso
   #==================
+  
   if(method=="IPF-tree-lasso"){
+    if(is.null(lambda)){
+      cat("Warning: Please provide a proper lambda sequence!")
+      lambda <- seq(1,3,length=10)
+      # fun.lambda <- function(x,y){
+      #   sum(matrix(x,nrow=1)%*%(y-matrix(rep(apply(y,2,mean),each=dim(y)[1]),ncol=dim(y)[2])))
+      # }
+      # lambda.max <- sqrt(max(sapply(split(x, rep(1:ncol(x), each=nrow(x))), fun.lambda, y=y)))
+      # lambda <- seq(lambda.max*0.1, lambda.max, length=5)
+    }
     tree.parm0 <- tree.parms(y=y)
     fit <- epsgo(Q.func = "tune.tree.interval", bounds = bounds, lambda=lambda, N=N,
                  parms.coding = "none", seed = seed, fminlower = fminlower, x = x, y = y, 
@@ -291,7 +303,7 @@ IPFStructPenaltyReg <- function(x, y, x_test=NULL, y_test=NULL, p, foldid, num.n
   # conditional logistic-lasso
   #==================
   if(method=="clogitLasso"){
-    fit <- epsgo(Q.func = "tune.clogit.interval", strata=strata, bounds = bounds, lambda=lambda, N=N,
+    fit <- epsgo(Q.func = "tune.clogit.interval", strata.surv=strata.surv, bounds = bounds, lambda=lambda, N=N,
                  parms.coding = "none", seed = seed, fminlower = fminlower, x = x, y = y,
                  foldid = foldid, p=p, min.iter=min.iter, 
                  verbose=verbose, parallel=parallel, EI.eps=EI.eps, ...)
@@ -309,11 +321,11 @@ IPFStructPenaltyReg <- function(x, y, x_test=NULL, y_test=NULL, p, foldid, num.n
     # adpen <- adpen*(dim(x_star)[2])/sum(adpen)
     
     ## prediction
-    # Beta <- clogitLasso(X=x_star,y=y_star, strata=strata,
+    # Beta <- clogitLasso(X=x_star,y=y_star, strata.surv=strata.surv,
     #                       fraction = lambda,
     #                       adpative = TRUE,
     #                       p.fact = adpen)$beta
-    fit.clogit <- penalized(Surv(y[,1], event= y[,2])~strata, X, lambda1=lambda, lambda2=alpha, model="cox")
+    fit.clogit <- penalized(Surv(y[,1], event= y[,2])~strata.surv, X, lambda1=lambda, lambda2=alpha, model="cox")
     Beta <- matrix(fit.clogit@penalized, ncol=1)
     ypred <- fit.clogit@lin.pred
     mse_val <- NA

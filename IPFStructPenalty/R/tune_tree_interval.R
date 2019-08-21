@@ -60,9 +60,6 @@ tune.tree.interval<-function(parms, x, y,
       cores <- length(lambda)*max(foldid)
       cvm0 <- numeric(cores)
       cl <- makeCluster(cores)
-      clusterEvalQ(cl, library(iterators))
-      clusterEvalQ(cl, library(foreach))
-      clusterEvalQ(cl, library(doParallel))
       clusterEvalQ(cl, library(IPFStructPenalty))
       registerDoParallel(cl)
       cvm0[1:cores] <- foreach(i = 1:cores, .combine=c, .packages= c('base','Matrix','MASS')) %dopar%{
@@ -72,19 +69,17 @@ tune.tree.interval<-function(parms, x, y,
       cvm0 <- rowMeans(matrix(cvm0, ncol=max(foldid)))
     }else{
       cvm0 <- numeric(length(lambda))
-      cl <- makeCluster(min(length(lambda),15))
-      clusterEvalQ(cl, library(iterators))
-      clusterEvalQ(cl, library(foreach))
-      clusterEvalQ(cl, library(doParallel))
+      nCores <- min(length(lambda),16,detectCores()-1)
+      cl <- makeCluster(nCores)
       clusterEvalQ(cl, library(IPFStructPenalty))
       registerDoParallel(cl)
-      cvm0[1:min(length(lambda),15)] <- foreach(i = 1:min(length(lambda),15), .combine=c, .packages= c('base','Matrix','MASS')) %dopar%{
+      cvm0[1:min(length(lambda),nCores)] <- foreach(i = 1:min(length(lambda),nCores), .combine=c, .packages= c('base','Matrix','MASS')) %dopar%{
         la.seq(lambda[i])
       }
       stopCluster(cl)
       
-      if(length(lambda)>15){
-        cvm0[(15+1):length(lambda)]<-apply(matrix(lambda[(15+1):length(lambda)],ncol=1), 1, la.seq)
+      if(length(lambda)>nCores){
+        cvm0[(nCores+1):length(lambda)]<-apply(matrix(lambda[(nCores+1):length(lambda)],ncol=1), 1, la.seq)
       }
     }
     
