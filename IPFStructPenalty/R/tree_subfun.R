@@ -1,5 +1,5 @@
 ###########################
-## All subfunctions for the tree-lasso and IPF-tree-lass methods.
+## Subfunction for the tree-lasso and IPF-tree-lass methods.
 ###########################
 accgrad <- function(y, x, lambda, Tree, C, g_idx, TauNorm,  mu, option, num.nonpen=0, intercept=TRUE){
   
@@ -281,8 +281,6 @@ convNd2T <- function(Nd, w, w_max){
   
 }
 fastCorr <- function(A){
-  # n <- dim(A)[1]
-  # B <- scale(A)
   C <- crossprod(scale(A))/(dim(A)[1]-1)
   return(C)
 }

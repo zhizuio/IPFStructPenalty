@@ -16,6 +16,7 @@
 #' @param parallel  If \code{TRUE}, use parallel foreach to fit each lambda. If \code{c(TRUE,TRUE)}, use parallel foreach to fit each lambda and each fold. 
 #' @param search.path save the visited points, default is \code{FALSE}.
 #' @param threshold threshold for estimated coefficients of the tree-lasso models.
+#' @param lib.loc a character vector describing the location of R library trees to search through, or \code{NULL}. The default value of NULL corresponds to all libraries currently known to .libPaths(). Non-existent library trees are silently ignored.
 #' @export
 tune.tree.interval<-function(parms, x, y,
                                 lambda = NULL, 
@@ -30,6 +31,7 @@ tune.tree.interval<-function(parms, x, y,
                                 parallel=FALSE,
                                 search.path=FALSE,
                                 threshold=threshold,
+                                lib.loc=NULL,
                                 ...){
   
   # 1. decode the parameters ############################################################
@@ -54,13 +56,14 @@ tune.tree.interval<-function(parms, x, y,
     sum((y[foldid==xx,] - cbind(rep(ifelse(intercept,1,NULL),sum(foldid==xx)),x2[foldid==xx,]) %*% tree.lasso(x=x2[!foldid==xx,], y=y[!foldid==xx,],lambda=la,tree.parm=tree.parm0,num.nonpen=num.nonpen,intercept=intercept,threshold=threshold))^2)/(prod(dim(y[foldid==xx,])))
   }
   la.seq <- function(la) {mean(sapply(1:max(foldid), cv5, la))}
+  
   if(sum(parallel)){
     if(sum(parallel)>1){
       la.xx <- cbind(rep(lambda,times=max(foldid)), rep(1:max(foldid),each=length(lambda)))
       cores <- length(lambda)*max(foldid)
       cvm0 <- numeric(cores)
       cl <- makeCluster(cores)
-      clusterEvalQ(cl, library(IPFStructPenalty))
+      clusterEvalQ(cl, library(IPFStructPenalty,lib.loc=lib.loc))
       registerDoParallel(cl)
       cvm0[1:cores] <- foreach(i = 1:cores, .combine=c, .packages= c('base','Matrix','MASS')) %dopar%{
         cv5(la.xx[i,2], la.xx[i,1])
@@ -71,7 +74,7 @@ tune.tree.interval<-function(parms, x, y,
       cvm0 <- numeric(length(lambda))
       nCores <- min(length(lambda),16,detectCores()-1)
       cl <- makeCluster(nCores)
-      clusterEvalQ(cl, library(IPFStructPenalty))
+      clusterEvalQ(cl, library(IPFStructPenalty,lib.loc=NULL))
       registerDoParallel(cl)
       cvm0[1:min(length(lambda),nCores)] <- foreach(i = 1:min(length(lambda),nCores), .combine=c, .packages= c('base','Matrix','MASS')) %dopar%{
         la.seq(lambda[i])

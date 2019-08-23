@@ -33,8 +33,8 @@
 #' @references Zhao, Z. & Zucknick, M. (2019). \emph{Stuctured penalized regression for drug sensitivity prediction.} arXiv: 1905.00095.
 #' @export
 IPFStructPenaltyReg <- function(x, y, x_test=NULL, y_test=NULL, p, foldid, num.nonpen=0, method="IPF-lasso", 
-                        lambda=NULL, bounds=NULL, strata.surv=NULL, search.path=FALSE, EI.eps=0.01, fminlower = 0,
-                        threshold=0, N=NULL, min.iter=20, seed=1234,parallel=FALSE, verbose=TRUE,...){
+                        lambda=NULL, bounds=NULL, strata.surv=NULL, search.path=FALSE, EI.eps=0.01, fminlower=0,
+                        threshold=0, N=NULL, min.iter=20, seed=1234,parallel=FALSE, verbose=TRUE, lib.loc=NULL,...){
   if((method!="lasso") & (method!="tree-lasso") & is.null(bounds)){
     if(method=="elastic-net"){
       bounds <- t(data.frame(alpha=c(0,1)))
@@ -219,7 +219,7 @@ IPFStructPenaltyReg <- function(x, y, x_test=NULL, y_test=NULL, p, foldid, num.n
   if(method=="tree-lasso"){
     if(is.null(lambda)){
       cat("Warning: Please provide a proper lambda sequence!")
-      lambda <- seq(1,2.5,length=10)
+      lambda <- seq(2,5,length=10)
       # fun.lambda <- function(x,y){
       #   sum(matrix(x,nrow=1)%*%(y-matrix(rep(apply(y,2,mean),each=dim(y)[1]),ncol=dim(y)[2])))
       # }
@@ -235,12 +235,9 @@ IPFStructPenaltyReg <- function(x, y, x_test=NULL, y_test=NULL, p, foldid, num.n
       cores <- length(lambda) * max(foldid)
       cvm0 <- numeric(cores)
       cl <- makeCluster(cores)
-      clusterEvalQ(cl, library(iterators))
-      clusterEvalQ(cl, library(foreach))
-      clusterEvalQ(cl, library(doParallel))
       clusterEvalQ(cl, library(IPFStructPenalty))
       registerDoParallel(cl)
-      cvm0[1:cores] <- foreach(i = 1:cores, .combine=c, .packages= c('base','foreach','Matrix','MASS','IPFStructPenalty')) %dopar%{
+      cvm0[1:cores] <- foreach(i = 1:cores, .combine=c, .packages= c('base','Matrix','MASS')) %dopar%{
         cv5(la.xx[i,2], la.xx[i,1])
       }
       stopCluster(cl)
@@ -269,7 +266,7 @@ IPFStructPenaltyReg <- function(x, y, x_test=NULL, y_test=NULL, p, foldid, num.n
   if(method=="IPF-tree-lasso"){
     if(is.null(lambda)){
       cat("Warning: Please provide a proper lambda sequence!")
-      lambda <- seq(1,3,length=10)
+      lambda <- seq(2,25,length=10)
       # fun.lambda <- function(x,y){
       #   sum(matrix(x,nrow=1)%*%(y-matrix(rep(apply(y,2,mean),each=dim(y)[1]),ncol=dim(y)[2])))
       # }

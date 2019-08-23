@@ -9,7 +9,7 @@ IPFStructPenaltyReg(x, y, x_test = NULL, y_test = NULL, p, foldid,
   bounds = NULL, strata.surv = NULL, search.path = FALSE,
   EI.eps = 0.01, fminlower = 0, threshold = 0, N = NULL,
   min.iter = 20, seed = 1234, parallel = FALSE, verbose = TRUE,
-  ...)
+  lib.loc = NULL, ...)
 }
 \arguments{
 \item{x, y}{\code{x} is the input design matrix; \code{y} is the input response matrix}

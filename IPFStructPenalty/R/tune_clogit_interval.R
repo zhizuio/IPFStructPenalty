@@ -13,6 +13,7 @@
 #' @param verbose print the middle search information, default is \code{TRUE}.
 #' @param seed random seed
 #' @param parallel If \code{TRUE}, use parallel foreach to fit each fold except parallelizing each lambda for the tree-lasso methods. If \code{c(TRUE,TRUE)}, use parallel foreach to fit each fold and each lambda.
+#' @param lib.loc a character vector describing the location of R library trees to search through, or NULL. The default value of NULL corresponds to all libraries currently known to .libPaths(). Non-existent library trees are silently ignored.
 #' @return An object with list "\code{tune.clogit.interval}"
 #' \item{q.val}{the minimum MSE (or minus likelihood for the Cox model) through the cross-validation}
 #' \item{model}{some model related quantities:
@@ -37,6 +38,7 @@ tune.clogit.interval<-function(parms, x=x, y=y,
                                          parallel=FALSE,
                                          verbose=FALSE,
                                          search.path=FALSE,
+                                         lib.loc=NULL,
                                          ...){
   
   # 1. decode the parameters ############################################################
@@ -84,7 +86,7 @@ tune.clogit.interval<-function(parms, x=x, y=y,
       cvm <- numeric(length(lambda))
       nCores <- min(length(lambda),16,detectCores()-1)
       cl <- makeCluster(nCores)
-      clusterEvalQ(cl, library(IPFStructPenalty))
+      clusterEvalQ(cl, library(IPFStructPenalty,lib.loc=lib.loc))
       registerDoParallel(cl)
       cvm[1:min(length(lambda),nCores)] <- foreach(i = 1:min(length(lambda),nCores), .combine=c, .packages= c('base','Matrix','MASS')) %dopar%{
         cv.k(lambda[i])

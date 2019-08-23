@@ -8,7 +8,7 @@ tune.clogit.interval(parms, x = x, y = y, x_test = NULL,
   y_test = NULL, strata.surv = NULL, lambda = NULL, nfolds = 3,
   foldid = NULL, seed = 12345, standardize.response = FALSE,
   p = NULL, parallel = FALSE, verbose = FALSE, search.path = FALSE,
-  ...)
+  lib.loc = NULL, ...)
 }
 \arguments{
 \item{x, y}{input matrix.}
@@ -28,6 +28,8 @@ tune.clogit.interval(parms, x = x, y = y, x_test = NULL,
 \item{parallel}{If \code{TRUE}, use parallel foreach to fit each fold except parallelizing each lambda for the tree-lasso methods. If \code{c(TRUE,TRUE)}, use parallel foreach to fit each fold and each lambda.}
 
 \item{verbose}{print the middle search information, default is \code{TRUE}.}
+
+\item{lib.loc}{a character vector describing the location of R library trees to search through, or NULL. The default value of NULL corresponds to all libraries currently known to .libPaths(). Non-existent library trees are silently ignored.}
 
 \item{family}{response type.}
 

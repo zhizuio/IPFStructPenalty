@@ -7,7 +7,8 @@
 tune.tree.interval(parms, x, y, lambda = NULL, nfolds = 5,
   foldid = NULL, num.nonpen = 0, seed = 12345, intercept = TRUE,
   standardize.response = FALSE, p = NULL, verbose = FALSE,
-  parallel = FALSE, search.path = FALSE, threshold = threshold, ...)
+  parallel = FALSE, search.path = FALSE, threshold = threshold,
+  lib.loc = NULL, ...)
 }
 \arguments{
 \item{parms}{tuning parameter alpha for the tree-lasso object.}
@@ -37,6 +38,8 @@ tune.tree.interval(parms, x, y, lambda = NULL, nfolds = 5,
 \item{search.path}{save the visited points, default is \code{FALSE}.}
 
 \item{threshold}{threshold for estimated coefficients of the tree-lasso models.}
+
+\item{lib.loc}{a character vector describing the location of R library trees to search through, or \code{NULL}. The default value of NULL corresponds to all libraries currently known to .libPaths(). Non-existent library trees are silently ignored.}
 }
 \description{
 Wrapper function for tree-lasso objects used by epsgo function. This function is mainly used within the function \code{epsgo}.
