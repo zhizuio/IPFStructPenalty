@@ -16,7 +16,10 @@ See the file `test.R` for s simple start with simulated data. The scripts `Sim_r
 The pre-print has been arXived [Zhao \& Zucknick (2019)](https://arxiv.org/abs/1902.04996): https://arxiv.org/abs/1902.04996.
 
 ## Update
-### New in the version IPFStructPenalty_1.0.tar.gz (23 August 2019):
+### New in the version IPFStructPenalty_1.0.1.tar.gz (30 August 2019):
+The unpenalized argument for the conditional logistic lasso has been added and passed from the EPSGO algorithm.
+
+### The version IPFStructPenalty_1.0.tar.gz (23 August 2019):
 
 The package and all codes have been adapted to do all data analysis in the pre-print [Zhao \& Zucknick (2019)](https://arxiv.org/abs/1902.04996).
 
