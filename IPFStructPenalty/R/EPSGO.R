@@ -12,7 +12,7 @@
 #' @param threshold threshold for estimated coefficients of the tree-lasso models.
 #' @param foldid an vector of values for the cross-validation.
 #' @param standardize.response standardization for the response variables. Default: \code{TRUE}.
-#' @param p the number of predictors from different data source.
+#' @param p the numbers of predictors from different data sources.
 #' @param num.nonpen number of predictors forced to be estimated (i.e., nonpenalization).
 #' @param round.n number of digits after comma, default is \code{5}.
 #' @param parms.coding parmeters coding: none or log2, default: \code{none}.

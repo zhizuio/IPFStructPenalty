@@ -26,7 +26,7 @@ epsgo(Q.func, bounds, x, y, family = "gaussian", lambda = NULL,
 
 \item{lambda}{optional user-supplied \code{lambda} sequence; default is NULL, and \code{espsgo} chooses its own sequence.}
 
-\item{p}{the number of predictors from different data source.}
+\item{p}{the numbers of predictors from different data sources.}
 
 \item{intercept}{should  intercept(s) be fitted (default=\code{TRUE}) or set to zero (\code{FALSE}).}
 

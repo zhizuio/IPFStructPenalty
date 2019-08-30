@@ -5,10 +5,10 @@
 \title{Wrapper function for conditional logistic lasso objects.}
 \usage{
 tune.clogit.interval(parms, x = x, y = y, x_test = NULL,
-  y_test = NULL, strata.surv = NULL, lambda = NULL, nfolds = 3,
-  foldid = NULL, seed = 12345, standardize.response = FALSE,
-  p = NULL, parallel = FALSE, verbose = FALSE, search.path = FALSE,
-  lib.loc = NULL, ...)
+  y_test = NULL, strata.surv = NULL, lambda = NULL, num.nonpen = 0,
+  nfolds = 3, foldid = NULL, seed = 12345,
+  standardize.response = FALSE, p = NULL, parallel = FALSE,
+  verbose = FALSE, search.path = FALSE, lib.loc = NULL, ...)
 }
 \arguments{
 \item{x, y}{input matrix.}

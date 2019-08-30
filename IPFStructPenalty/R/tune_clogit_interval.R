@@ -30,6 +30,7 @@ tune.clogit.interval<-function(parms, x=x, y=y,
                                          y_test=NULL,
                                          strata.surv=NULL,
                                          lambda = NULL,
+                                         num.nonpen = 0,
                                          nfolds = 3,
                                          foldid =NULL,
                                          seed=12345, 
@@ -45,6 +46,16 @@ tune.clogit.interval<-function(parms, x=x, y=y,
   set.seed(seed)
   X <- data.matrix(x)
   y <- data.matrix(y)
+  
+  X0 <- data.frame(NA); names(X0) <- "0"
+  if(num.nonpen>0){
+    if(ncol(X) != num.nonpen+sum(p))
+      stop("Error: please provide the correct numbers of predictors from different data sources.")
+    
+    X0 <- data.frame(X[,1:num.nonpen])
+    names(X0) <- paste("X0", 1:num.nonpen, sep="")
+    X <- X[,-c(1:num.nonpen)]
+  }
   
   if(is.null(p) | length(p)==1) stop("The argument p must be a vector!")
   if(is.null(lambda)) stop("No given lambda sequence!")
@@ -78,7 +89,7 @@ tune.clogit.interval<-function(parms, x=x, y=y,
     for(i in 2:length(p)) lambda1 <- c(lambda1, rep(la,p[i])*ipf[i-1])
     resp <- Surv(y[,1], event= y[,2])
     strata.surv
-    fit.loglik <- cvl(resp~strata.surv, X, lambda1=lambda1, lambda2=alpha, model="cox", fold=foldid)$fullfit@loglik
+    fit.loglik <- cvl(resp~strata.surv, penalized=X, unpenalized=as.formula(paste("~",paste(names(X0),collapse="+"),sep="")), data=X0, lambda1=lambda1, lambda2=alpha, model="cox", fold=foldid)$fullfit@loglik
     return(fit.loglik)
   }
   
@@ -108,7 +119,7 @@ tune.clogit.interval<-function(parms, x=x, y=y,
   lambda1 <- rep(opt.lambda, p[1])
   for(i in 2:length(p)) lambda1 <- c(lambda1, rep(opt.lambda,p[i])*ipf[i-1])
   resp <- Surv(y[,1], event= y[,2])
-  cv <- cvl(resp~strata.surv, X, lambda1=lambda1, lambda2=alpha, model="cox", fold=foldid)
+  cv <- cvl(resp~strata.surv, penalized=X, unpenalized=as.formula(paste("~",paste(names(X0),collapse="+"),sep="")), data=X0, lambda1=lambda1, lambda2=alpha, model="cox", fold=foldid)
   
   
   if(!search.path){
