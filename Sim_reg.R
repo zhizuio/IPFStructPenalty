@@ -158,6 +158,17 @@ legend(0,10,
 points(1, 1 , pch = 24, bg = "darkgrey", cex=1.5)
 text(2.4, 1, "mean")
 
+# accuracy of coefficients recovery in simulation Scenario 1
+cvm1[,c(1,3,2,4,5,6),6] <- cvm1[,c(1,3,2,4,5,6),6]/((150+150)*24)
+table1.sim150_150 <- apply(cvm1[,c(1,3,2,4,5,6),6:9], c(2,3), mean)
+colnames(table1.sim150_150) <- c("norm_bias", "sensitivity", "specificity", "non-zero")
+rownames(table1.sim150_150) <- c("lasso","IPF-lasso","elastic","sIPFEN","tree-lasso","IPF-tree-lasso")
+
+cvm2[,c(1,3,2,4,5,6),6] <- cvm2[,c(1,3,2,4,5,6),6]/((150+150)*24)
+table1.sim500_150 <- apply(cvm2[,c(1,3,2,4,5,6),6:9], c(2,3), mean)
+colnames(table1.sim500_150) <- c("norm_bias", "sensitivity", "specificity", "non-zero")
+rownames(table1.sim500_150) <- c("lasso","IPF-lasso","elastic","sIPFEN","tree-lasso","IPF-tree-lasso")
+
 # plot MSE of cross-validation from learning data
 layout(matrix(1:8,nrow=2,byrow=F))
 par(mar=c(1,4,4,1))
