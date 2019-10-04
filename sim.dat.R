@@ -28,9 +28,9 @@ sim2 <- function(p=c(500,150),n=100,m=24,rho=.4,B.elem=c(0.2,0.6)){
     
     Xsigma<-rbind(cbind(Xsigma1,Xsigma12),cbind(Xsigma21,Xsigma2))
     X<-	mvrnorm(n,mu=rep(0,p[1]+p[2]),Sigma=Xsigma)
-    X1<-X[,1:p[1]]
-    X2<-data.matrix(X[,(p[1]+1):(p[1]+p[2])] > 0) + 0
-    
+    #X1<-X[,1:p[1]]
+    #X2<-data.matrix(X[,(p[1]+1):(p[1]+p[2])] > 0) + 0
+    X[,(p[1]+1):(p[1]+p[2])]<-data.matrix(X[,(p[1]+1):(p[1]+p[2])] > 0) + 0
     # generate uncorrelated error term
     esd<-diag(m)
     e<-mvrnorm(n,mu=rep(0,m),Sigma=esd)
@@ -91,9 +91,9 @@ sim1 <- function(p=c(500,150),n=100,m=24,rho=.4,B.elem=c(0.2,0.6)){
     
     Xsigma<-rbind(cbind(Xsigma1,Xsigma12),cbind(Xsigma21,Xsigma2))
     X<-	mvrnorm(n,mu=rep(0,p[1]+p[2]),Sigma=Xsigma)
-    X1<-X[,1:p[1]]
-    X2<-data.matrix(X[,(p[1]+1):(p[1]+p[2])] > 0) + 0
-    
+    #X1<-X[,1:p[1]]
+    #X2<-data.matrix(X[,(p[1]+1):(p[1]+p[2])] > 0) + 0
+    X[,(p[1]+1):(p[1]+p[2])]<-data.matrix(X[,(p[1]+1):(p[1]+p[2])] > 0) + 0
     # generate uncorrelated error term
     esd<-diag(m)
     e<-mvrnorm(n,mu=rep(0,m),Sigma=esd)
@@ -156,9 +156,9 @@ sim3 <- function(p=c(500,150),n=100,m=24,rho=.4,B.elem=c(0.2,0.6)){
     
     Xsigma<-rbind(cbind(Xsigma1,Xsigma12),cbind(Xsigma21,Xsigma2))
     X<-	mvrnorm(n,mu=rep(0,p[1]+p[2]),Sigma=Xsigma)
-    X1<-X[,1:p[1]]
-    X2<-data.matrix(X[,(p[1]+1):(p[1]+p[2])] > 0) + 0
-    
+    #X1<-X[,1:p[1]]
+    #X2<-data.matrix(X[,(p[1]+1):(p[1]+p[2])] > 0) + 0
+    X[,(p[1]+1):(p[1]+p[2])]<-data.matrix(X[,(p[1]+1):(p[1]+p[2])] > 0) + 0
     # generate uncorrelated error term
     esd<-diag(m)
     e<-mvrnorm(n,mu=rep(0,m),Sigma=esd)
