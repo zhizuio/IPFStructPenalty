@@ -5,7 +5,7 @@
 # date: 08-Feb-2019
 #================================================================================================================
 
-sim1 <- function(p=c(500,150),n=100,m=24,rho=.4,B.elem=c(0.2,0.6)){
+sim2 <- function(p=c(500,150),n=100,m=24,rho=.4,B.elem=c(0.2,0.6)){
   b<-10
   if(!is.na(p[2])){
     # generate covariance matrix
@@ -68,7 +68,7 @@ sim1 <- function(p=c(500,150),n=100,m=24,rho=.4,B.elem=c(0.2,0.6)){
   return(list(Y=Y, X=X, Beta=Beta, e=e, p=p))
 }
 
-sim2 <- function(p=c(500,150),n=100,m=24,rho=.4,B.elem=c(0.2,0.6)){
+sim1 <- function(p=c(500,150),n=100,m=24,rho=.4,B.elem=c(0.2,0.6)){
   b<-10
   if(!is.na(p[2])){
     # generate covariance matrix
