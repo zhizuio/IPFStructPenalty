@@ -17,7 +17,7 @@ dir.create("results/")
 para<-matrix(c(150, 150, 500, 150),nrow=2,byrow=T)
 
 # this is the function to do simulation analysis
-SimAnalysis <- function(num=1, scenario=1, hete=1, method="IPF-lasso", lambda=NULL, bounds=NULL,
+SimAnalysis <- function(num=1, scenario=1, hete=1, method.idx=3, lambda=NULL, bounds=NULL,
                         threshold=0, N=21, min.iter=10, seed=1234, parallel=FALSE, verbose=TRUE){
   set.seed(num)
   # generate learning dataset
