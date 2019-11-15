@@ -97,7 +97,7 @@ tune.clogit.interval<-function(parms, x=x, y=y,
       cvm <- numeric(length(lambda))
       nCores <- min(length(lambda),16,detectCores()-1)
       cl <- makeCluster(nCores)
-      clusterEvalQ(cl, library(IPFStructPenalty,lib.loc=lib.loc))
+      clusterEvalQ(cl, library(IPFStructPenalty))
       registerDoParallel(cl)
       cvm[1:min(length(lambda),nCores)] <- foreach(i = 1:min(length(lambda),nCores), .combine=c, .packages= c('base','Matrix','MASS')) %dopar%{
         cv.k(lambda[i])
