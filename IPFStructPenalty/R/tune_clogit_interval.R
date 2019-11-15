@@ -92,12 +92,13 @@ tune.clogit.interval<-function(parms, x=x, y=y,
     fit.loglik <- cvl(resp~strata.surv, penalized=X, unpenalized=as.formula(paste("~",paste(names(X0),collapse="+"),sep="")), data=X0, lambda1=lambda1, lambda2=alpha, model="cox", fold=foldid)$fullfit@loglik
     return(fit.loglik)
   }
-  
   if(sum(parallel)){
       cvm <- numeric(length(lambda))
       nCores <- min(length(lambda),16,detectCores()-1)
       cl <- makeCluster(nCores)
-      clusterEvalQ(cl, library(IPFStructPenalty))
+      ## the argument "lib.loc" is not passed to the funciton clusterEvalQ
+      clusterEvalQ(cl, library("IPFStructPenalty",lib.loc))
+      #clusterEvalQ(cl, library(IPFStructPenalty))
       registerDoParallel(cl)
       cvm[1:min(length(lambda),nCores)] <- foreach(i = 1:min(length(lambda),nCores), .combine=c, .packages= c('base','Matrix','MASS')) %dopar%{
         cv.k(lambda[i])
@@ -119,8 +120,11 @@ tune.clogit.interval<-function(parms, x=x, y=y,
   lambda1 <- rep(opt.lambda, p[1])
   for(i in 2:length(p)) lambda1 <- c(lambda1, rep(opt.lambda,p[i])*ipf[i-1])
   resp <- Surv(y[,1], event= y[,2])
-  cv <- cvl(resp~strata.surv, penalized=X, unpenalized=as.formula(paste("~",paste(names(X0),collapse="+"),sep="")), data=X0, lambda1=lambda1, lambda2=alpha, model="cox", fold=foldid)
-  
+  if(is.na(X0)){
+    cv <- cvl(resp~strata.surv, penalized=X, data=X0, lambda1=lambda1, lambda2=alpha, model="cox", fold=foldid)
+  }else{
+    cv <- cvl(resp~strata.surv, penalized=X, unpenalized=as.formula(paste("~",paste(names(X0),collapse="+"),sep="")), data=X0, lambda1=lambda1, lambda2=alpha, model="cox", fold=foldid)
+  }
   
   if(!search.path){
     ret<-list(q.val=q.val, model=list(lambda=opt.lambda, alpha=alpha, ipf=ipf, p=p, nfolds=nfolds, cvreg=cv))

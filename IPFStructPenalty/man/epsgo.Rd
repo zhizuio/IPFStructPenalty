@@ -13,7 +13,7 @@ epsgo(Q.func, bounds, x, y, family = "gaussian", lambda = NULL,
   Dir.ep = 1e-04, Dir.tol = 0.01, EI.eps = 0.01, min.iter = 10,
   pdf.name = NULL, pdf.width = 12, pdf.height = 12, my.mfrow = c(1,
   1), parallel = FALSE, modelList = NULL, verbose = TRUE,
-  seed = 123, search.path = FALSE, ...)
+  seed = 123, search.path = FALSE, lib.loc = NULL, ...)
 }
 \arguments{
 \item{Q.func}{name of the function to be minimized.}
@@ -67,6 +67,8 @@ epsgo(Q.func, bounds, x, y, family = "gaussian", lambda = NULL,
 \item{seed}{random seed}
 
 \item{search.path}{save the visited points, default is \code{FALSE}.}
+
+\item{lib.loc}{a character vector describing the location of R library trees to search through, or NULL by default.}
 
 \item{espilon}{the convergence shreshold for the function \code{Q.func}, default is 0.01.}
 }

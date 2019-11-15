@@ -20,6 +20,7 @@
 #' @param seed random seed.
 #' @param parallel If \code{TRUE}, use parallel foreach to fit each fold except parallelizing each lambda for the tree-lasso methods. If \code{c(TRUE,TRUE)}, use parallel foreach to fit each fold and each lambda. 
 #' @param verbose print the middle search information, default is \code{TRUE}.
+#' @param lib.loc a character vector describing the location of R library trees to search through, or NULL by default.
 #' @return An object of list "\code{IPFStructPenaltyReg}" is returned:
 #'  \item{cvm}{the mean cross-validated error}  
 #'  \item{cvm_cv}{the mean cross-validated error if providing external dataset "\code{x_test}" and "\code{y_test}". } 
