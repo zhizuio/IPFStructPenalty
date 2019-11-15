@@ -63,7 +63,7 @@ tune.tree.interval<-function(parms, x, y,
       cores <- length(lambda)*max(foldid)
       cvm0 <- numeric(cores)
       cl <- makeCluster(cores)
-      clusterEvalQ(cl, library(IPFStructPenalty,lib.loc=lib.loc))
+      clusterEvalQ(cl, library(IPFStructPenalty,lib.loc))
       registerDoParallel(cl)
       cvm0[1:cores] <- foreach(i = 1:cores, .combine=c, .packages= c('base','Matrix','MASS')) %dopar%{
         cv5(la.xx[i,2], la.xx[i,1])
@@ -74,7 +74,7 @@ tune.tree.interval<-function(parms, x, y,
       cvm0 <- numeric(length(lambda))
       nCores <- min(length(lambda),16,detectCores()-1)
       cl <- makeCluster(nCores)
-      clusterEvalQ(cl, library(IPFStructPenalty,lib.loc=NULL))
+      clusterEvalQ(cl, library(IPFStructPenalty,lib.loc))
       registerDoParallel(cl)
       cvm0[1:min(length(lambda),nCores)] <- foreach(i = 1:min(length(lambda),nCores), .combine=c, .packages= c('base','Matrix','MASS')) %dopar%{
         la.seq(lambda[i])
