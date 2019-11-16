@@ -4,7 +4,7 @@
 \alias{plot.sum.intsearch}
 \title{Plot Summary object for interval search models}
 \usage{
-plot.sum.intsearch(x, type = "summary", startN = 21, ...)
+\method{plot}{sum.intsearch}(x, type = "summary", startN = 21, ...)
 }
 \description{
 Produces a plot for summary object of a fitted interval search model. Plot 'visited' points against iteration steps. start.N points are initial points selected before interval search starts. See the \code{R} package \pkg{c060} for details.

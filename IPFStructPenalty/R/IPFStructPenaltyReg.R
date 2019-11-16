@@ -2,6 +2,15 @@
 #' @title Structured penalized regression
 #' @description
 #' Function producing results of the structured penalized regression
+#' 
+#' @importFrom Matrix Diagonal bdiag
+#' @importFrom glmnet glmnet cv.glmnet
+#' @importFrom stats sd
+#' @importFrom parallel detectCores makeCluster	stopCluster
+#' @importFrom foreach foreach %dopar%
+#' @importFrom doParallel registerDoParallel
+#' @importFrom penalized penalized
+#' 
 #' @param x,y \code{x} is the input design matrix; \code{y} is the input response matrix
 #' @param x_test,y_test \code{x} is the input validated design matrix; \code{y} is the input validated response matrix
 #' @param p the number of predictors from different data source.
@@ -20,7 +29,7 @@
 #' @param seed random seed.
 #' @param parallel If \code{TRUE}, use parallel foreach to fit each fold except parallelizing each lambda for the tree-lasso methods. If \code{c(TRUE,TRUE)}, use parallel foreach to fit each fold and each lambda. 
 #' @param verbose print the middle search information, default is \code{TRUE}.
-#' @param lib.loc a character vector describing the location of R library trees to search through, or NULL by default.
+#' ##param lib.loc a character vector describing the location of R library trees to search through, or NULL by default.
 #' @return An object of list "\code{IPFStructPenaltyReg}" is returned:
 #'  \item{cvm}{the mean cross-validated error}  
 #'  \item{cvm_cv}{the mean cross-validated error if providing external dataset "\code{x_test}" and "\code{y_test}". } 
@@ -35,7 +44,7 @@
 #' @export
 IPFStructPenaltyReg <- function(x, y, x_test=NULL, y_test=NULL, p, foldid, num.nonpen=0, method="IPF-lasso", 
                         lambda=NULL, bounds=NULL, strata.surv=NULL, search.path=FALSE, EI.eps=0.01, fminlower=0,
-                        threshold=0, N=NULL, min.iter=20, seed=1234,parallel=FALSE, verbose=TRUE, lib.loc=NULL,...){
+                        threshold=0, N=NULL, min.iter=20, seed=1234,parallel=FALSE, verbose=TRUE, ...){
   if((method!="lasso") & (method!="tree-lasso") & is.null(bounds)){
     if(method=="elastic-net"){
       bounds <- t(data.frame(alpha=c(0,1)))
@@ -236,7 +245,7 @@ IPFStructPenaltyReg <- function(x, y, x_test=NULL, y_test=NULL, p, foldid, num.n
       cores <- length(lambda) * max(foldid)
       cvm0 <- numeric(cores)
       cl <- makeCluster(cores)
-      clusterEvalQ(cl, library(IPFStructPenalty))
+      #clusterEvalQ(cl, library(IPFStructPenalty))
       registerDoParallel(cl)
       cvm0[1:cores] <- foreach(i = 1:cores, .combine=c, .packages= c('base','Matrix','MASS')) %dopar%{
         cv5(la.xx[i,2], la.xx[i,1])
@@ -323,7 +332,7 @@ IPFStructPenaltyReg <- function(x, y, x_test=NULL, y_test=NULL, p, foldid, num.n
     #                       fraction = lambda,
     #                       adpative = TRUE,
     #                       p.fact = adpen)$beta
-    fit.clogit <- penalized(Surv(y[,1], event= y[,2])~strata.surv, X, lambda1=lambda, lambda2=alpha, model="cox")
+    fit.clogit <- penalized(Surv(y[,1], event= y[,2])~strata.surv, x, lambda1=lambda, lambda2=alpha, model="cox")
     Beta <- matrix(fit.clogit@penalized, ncol=1)
     ypred <- fit.clogit@lin.pred
     mse_val <- NA

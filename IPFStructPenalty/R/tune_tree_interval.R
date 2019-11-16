@@ -2,6 +2,11 @@
 #' @title Wrapper function for tree-lasso objects.
 #' @description
 #' Wrapper function for tree-lasso objects used by epsgo function. This function is mainly used within the function \code{epsgo}.
+#' 
+#' @importFrom parallel detectCores makeCluster	stopCluster
+#' @importFrom foreach foreach %dopar%
+#' @importFrom doParallel registerDoParallel
+#' 
 #' @param parms tuning parameter alpha for the tree-lasso object.
 #' @param x,y \code{x} is a matrix where each row refers to a sample a each column refers to a gene; \code{y} is a factor which includes the class for each sample
 #' @param lambda A user supplied lambda sequence. 
@@ -16,7 +21,6 @@
 #' @param parallel  If \code{TRUE}, use parallel foreach to fit each lambda. If \code{c(TRUE,TRUE)}, use parallel foreach to fit each lambda and each fold. 
 #' @param search.path save the visited points, default is \code{FALSE}.
 #' @param threshold threshold for estimated coefficients of the tree-lasso models.
-#' @param lib.loc a character vector describing the location of R library trees to search through, or \code{NULL}. The default value of NULL corresponds to all libraries currently known to .libPaths(). Non-existent library trees are silently ignored.
 #' @export
 tune.tree.interval<-function(parms, x, y,
                                 lambda = NULL, 
@@ -31,7 +35,6 @@ tune.tree.interval<-function(parms, x, y,
                                 parallel=FALSE,
                                 search.path=FALSE,
                                 threshold=threshold,
-                                lib.loc=NULL,
                                 ...){
   
   # 1. decode the parameters ############################################################
@@ -63,7 +66,7 @@ tune.tree.interval<-function(parms, x, y,
       cores <- length(lambda)*max(foldid)
       cvm0 <- numeric(cores)
       cl <- makeCluster(cores)
-      clusterEvalQ(cl, library(IPFStructPenalty,lib.loc))
+      #clusterEvalQ(cl, library(IPFStructPenalty))
       registerDoParallel(cl)
       cvm0[1:cores] <- foreach(i = 1:cores, .combine=c, .packages= c('base','Matrix','MASS')) %dopar%{
         cv5(la.xx[i,2], la.xx[i,1])
@@ -74,7 +77,19 @@ tune.tree.interval<-function(parms, x, y,
       cvm0 <- numeric(length(lambda))
       nCores <- min(length(lambda),16,detectCores()-1)
       cl <- makeCluster(nCores)
-      clusterEvalQ(cl, library(IPFStructPenalty,lib.loc))
+      # clusterEvalQ(cl, library(mlegp,lib.loc="/home/zhiz/RLibrary"))
+      # clusterEvalQ(cl, library(tgp,lib.loc="/home/zhiz/RLibrary"))
+      # clusterEvalQ(cl, library(statmod,lib.loc="/home/zhiz/RLibrary"))
+      # clusterEvalQ(cl, library(corpcor,lib.loc="/home/zhiz/RLibrary"))
+      # clusterEvalQ(cl, library(e1071,lib.loc="/home/zhiz/RLibrary"))
+      # clusterEvalQ(cl, library(lhs,lib.loc="/home/zhiz/RLibrary"))
+      # clusterEvalQ(cl, library(iterators,lib.loc="/home/zhiz/RLibrary"))
+      # clusterEvalQ(cl, library(foreach,lib.loc="/home/zhiz/RLibrary"))
+      # clusterEvalQ(cl, library(doParallel,lib.loc="/home/zhiz/RLibrary"))
+      # clusterEvalQ(cl, library(penalizedSVM,lib.loc="/home/zhiz/RLibrary"))
+      # clusterEvalQ(cl, library(penalized,lib.loc="/home/zhiz/RLibrary"))
+      # clusterEvalQ(cl, library(IPFStructPenalty,lib.loc="/home/zhiz/RLibrary"))
+      #clusterEvalQ(cl, library(IPFStructPenalty,lib.loc=NULL))
       registerDoParallel(cl)
       cvm0[1:min(length(lambda),nCores)] <- foreach(i = 1:min(length(lambda),nCores), .combine=c, .packages= c('base','Matrix','MASS')) %dopar%{
         la.seq(lambda[i])

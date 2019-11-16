@@ -10,8 +10,7 @@ tune.glmnet.interval(parms, x, y, weights, x_test = NULL,
   "mae"), seed = 12345, grouped = TRUE, type.min = c("lambda.min",
   "lambda.1se"), family = "gaussian", foldid = NULL,
   intercept = TRUE, standardize.response = FALSE, p = NULL,
-  parallel = FALSE, verbose = FALSE, search.path = FALSE,
-  lib.loc = NULL, ...)
+  parallel = FALSE, verbose = FALSE, search.path = FALSE, ...)
 }
 \description{
 Wrapper function for glmnet objects used by epsgo function. This function is mainly used within the function \code{epsgo}. See the \code{R} package \pkg{c060} for details.

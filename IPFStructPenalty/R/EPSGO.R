@@ -2,6 +2,14 @@
 #' @title Efficient Parameter Selection via Global Optimization
 #' @description
 #' Finds an optimal solution for the \code{Q.func} function.
+#' 
+#' @importFrom tgp lhs
+#' @importFrom grDevices pdf dev.off
+#' @importFrom graphics par plot abline
+#' @importFrom mlegp mlegp
+#' @importFrom stats runif sd
+#' @importFrom penalizedSVM Direct
+#' 
 #' @param Q.func name of the function to be minimized.
 #' @param bounds bounds for the interval-searching parameters
 #' @param x,y input matrix.
@@ -28,7 +36,6 @@
 #' @param seed random seed
 #' @param parallel If \code{TRUE}, use parallel foreach to fit each fold except parallelizing each lambda for the tree-lasso methods. If \code{c(TRUE,TRUE)}, use parallel foreach to fit each fold and each lambda.
 #' @param search.path save the visited points, default is \code{FALSE}.
-#' @param lib.loc a character vector describing the location of R library trees to search through, or NULL by default.
 #' @param modelList detailed information of the search process
 #' @references Frohlich, H. & Zell, A. (2005). \emph{Efficient Parameter Selection for Support Vector Machines in Clas- sification and Regression via Model-Based Global Optimization.} Proceedings of the International Joint Conference of Neural Networks, pp 1431-1438.
 #' @references Sill, M., Hielscher, T., Becker, N. & Zucknick, M. (2014).\emph{c060: Extended Inference with Lasso and elastic net Regularized Cox and Generalized Linear methods.} Journal of Statistical Software, 62(5):1-22.
@@ -84,7 +91,6 @@ epsgo<- function(
                 verbose=TRUE,
                 seed=123, 
 								search.path=FALSE,
-								lib.loc=NULL,
                 ... ){
 	# The EPSGO algorithm (theory from Frohlich and Zell (2005) and original code from Sill, Hielscher, Becker and Zucknick (2014))
 	#
@@ -185,7 +191,7 @@ epsgo<- function(
 	###################################################################################################################
 	
 	model.list<-apply(X, 1, eval(Q.func), parms.coding=parms.coding, x=x, y=y, strata.surv=strata.surv, lambda=lambda, maxevals=maxevals, seed=seed, family=family, num.nonpen=num.nonpen,foldid=foldid, 
-	                  intercept=intercept, standardize.response=standardize.response, p=p, parallel=parallel,verbose=verbose,search.path=search.path,threshold=threshold,lib.loc=lib.loc, ...)
+	                  intercept=intercept, standardize.response=standardize.response, p=p, parallel=parallel,verbose=verbose,search.path=search.path,threshold=threshold, ...)
 	#browser()
 	# take the Q.values
 	Q<- as.numeric(unlist( sapply(model.list, "[", "q.val")))
@@ -283,7 +289,7 @@ epsgo<- function(
 		  fminold <- fmin
 		
 			model.list.new<-apply(X, 1, eval(Q.func), parms.coding=parms.coding, x=x, y=y, strata.surv=strata.surv, lambda=lambda, maxevals=maxevals, seed=seed, family=family, num.nonpen=num.nonpen,foldid=foldid, intercept=intercept, 
-			                      standardize.response=standardize.response, spatial=spatial, p=p, parallel=parallel,verbose=verbose,search.path=search.path,threshold=threshold,lib.loc=lib.loc, ...)
+			                      standardize.response=standardize.response, p=p, parallel=parallel,verbose=verbose,search.path=search.path,threshold=threshold, ...)
 		  
       model.list<-c(model.list, model.list.new )
       Q<- as.numeric(unlist( sapply(model.list.new, "[", "q.val")))
@@ -467,7 +473,8 @@ epsgo<- function(
         }
 	
 	} # end of while (!finished) 
-		
+	
+	closeAllConnections()	
 	if(show !="none" & !is.null(pdf.name)) dev.off()	
 		
 	# define the set of points with the same fmin

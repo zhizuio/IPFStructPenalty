@@ -2,6 +2,9 @@
 #' @title ExpImprovement
 #' @description
 #' Calculates the expected improvement of the funtion \code{Q.func}. See the \code{R} package  \pkg{penalizedSVM} for details.
+#' 
+#' @importFrom stats pnorm dnorm predict
+#' 
 #' @export
 ExpImprovement<- function(x_new, fmin, fit.gp, muX=NULL, muY=NULL, EI.eps=0.01){
 
@@ -11,8 +14,7 @@ ExpImprovement<- function(x_new, fmin, fit.gp, muX=NULL, muY=NULL, EI.eps=0.01){
 
 ###  x_new - a new point in parameter space
 
-	 require(mlegp)
-    # don't allow negative parameters coused by substration 'x_new - muX'!   skip normalisation in R implementation! 
+	 # don't allow negative parameters coused by substration 'x_new - muX'!   skip normalisation in R implementation! 
 	#x_new= (x_new - muX);
 
 	# check: x_new should be a vector (1, k) !

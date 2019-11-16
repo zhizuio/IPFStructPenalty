@@ -10,11 +10,13 @@ Description: Structured multireponse penalized regression with heterogeneous gro
 License: GPL-3
 URL: https://github.com/zhizuio/IPFStructPenalty
 RoxygenNote: 6.1.1
-Depends: R (>= 3.2), doParallel, glmnet, tgp, penalizedSVM, penalized
+Imports: doParallel, foreach, parallel, glmnet, tgp, penalizedSVM,
+        mlegp, penalized, survival, Matrix, grDevices, graphics, stats
+Depends: R (>= 3.5)
 Encoding: UTF-8
 LazyData: true
 NeedsCompilation: no
-Packaged: 2019-11-15 19:57:25 UTC; zhiz
+Packaged: 2019-11-15 23:45:04 UTC; zhiz
 Author: Zhi Zhao [aut, cre],
   Manuela Zucknick [aut]
 Maintainer: Zhi Zhao <zhi.zhao@medisin.uio.no>

@@ -2,6 +2,13 @@
 #' @title Wrapper function for glmnet objects.
 #' @description
 #' Wrapper function for glmnet objects used by epsgo function. This function is mainly used within the function \code{epsgo}. See the \code{R} package \pkg{c060} for details.
+#' 
+#' @importFrom Matrix Diagonal bdiag
+#' @importFrom glmnet glmnet cv.glmnet
+#' @importFrom parallel detectCores makeCluster	stopCluster
+#' @importFrom foreach foreach %dopar%
+#' @importFrom doParallel registerDoParallel
+#' 
 #' @export
 tune.glmnet.interval<-function(parms, x, y,
                                          weights, 
@@ -23,7 +30,6 @@ tune.glmnet.interval<-function(parms, x, y,
                                          parallel=FALSE,
                                          verbose=FALSE,
                                          search.path=FALSE,
-                                         lib.loc=NULL,
                                          ...){
   
   # 1. decode the parameters ############################################################
@@ -31,13 +37,13 @@ tune.glmnet.interval<-function(parms, x, y,
   y <- data.matrix(y)
   
   if(!identical(grep("alpha", names(parms)), integer(0))){
-    alpha<-round(parms[grep("alpha", names(parms))],dig=2)
+    alpha<-round(parms[grep("alpha", names(parms))],digits=2)
     if(verbose) print(paste("alpha=",paste(as.character(alpha),collapse=",")))
   }else{
     alpha<-1
   }
   if(!identical(grep("ipf", names(parms)), integer(0))){
-    ipf<-round(parms[grep("ipf", names(parms))],dig=2)
+    ipf<-round(parms[grep("ipf", names(parms))],digits=2)
     if(verbose) print(paste("IPF=",paste(as.character(ipf),collapse=":")))
   }else{
     ipf<-NA
@@ -154,7 +160,19 @@ tune.glmnet.interval<-function(parms, x, y,
       cvm0 <- numeric(length(lambda))
       if(sum(parallel)==1){
         cl <- makeCluster(min(length(lambda),15))
-        clusterEvalQ(cl, library(IPFStructPenalty,lib.loc))
+        # clusterEvalQ(cl, library(mlegp,lib.loc="/home/zhiz/RLibrary"))
+        # clusterEvalQ(cl, library(tgp,lib.loc="/home/zhiz/RLibrary"))
+        # clusterEvalQ(cl, library(statmod,lib.loc="/home/zhiz/RLibrary"))
+        # clusterEvalQ(cl, library(corpcor,lib.loc="/home/zhiz/RLibrary"))
+        # clusterEvalQ(cl, library(e1071,lib.loc="/home/zhiz/RLibrary"))
+        # clusterEvalQ(cl, library(lhs,lib.loc="/home/zhiz/RLibrary"))
+        # clusterEvalQ(cl, library(iterators,lib.loc="/home/zhiz/RLibrary"))
+        # clusterEvalQ(cl, library(foreach,lib.loc="/home/zhiz/RLibrary"))
+        # clusterEvalQ(cl, library(doParallel,lib.loc="/home/zhiz/RLibrary"))
+        # clusterEvalQ(cl, library(glmnet,lib.loc="/home/zhiz/RLibrary"))
+        # clusterEvalQ(cl, library(penalizedSVM,lib.loc="/home/zhiz/RLibrary"))
+        # clusterEvalQ(cl, library(IPFStructPenalty,lib.loc="/home/zhiz/RLibrary"))
+        #clusterEvalQ(cl, library(IPFStructPenalty))
         registerDoParallel(cl)
         cvm0[1:min(length(lambda),15)] <- foreach(i = 1:min(length(lambda),15), .combine=c, .packages= c('base','Matrix','MASS')) %dopar%{
           adpen00 <- adpen00

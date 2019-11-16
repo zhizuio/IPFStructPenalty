@@ -9,7 +9,7 @@ IPFStructPenaltyReg(x, y, x_test = NULL, y_test = NULL, p, foldid,
   bounds = NULL, strata.surv = NULL, search.path = FALSE,
   EI.eps = 0.01, fminlower = 0, threshold = 0, N = NULL,
   min.iter = 20, seed = 1234, parallel = FALSE, verbose = TRUE,
-  lib.loc = NULL, ...)
+  ...)
 }
 \arguments{
 \item{x, y}{\code{x} is the input design matrix; \code{y} is the input response matrix}
@@ -46,9 +46,8 @@ IPFStructPenaltyReg(x, y, x_test = NULL, y_test = NULL, p, foldid,
 
 \item{parallel}{If \code{TRUE}, use parallel foreach to fit each fold except parallelizing each lambda for the tree-lasso methods. If \code{c(TRUE,TRUE)}, use parallel foreach to fit each fold and each lambda.}
 
-\item{verbose}{print the middle search information, default is \code{TRUE}.}
-
-\item{lib.loc}{a character vector describing the location of R library trees to search through, or NULL by default.}
+\item{verbose}{print the middle search information, default is \code{TRUE}.
+##param lib.loc a character vector describing the location of R library trees to search through, or NULL by default.}
 }
 \value{
 An object of list "\code{IPFStructPenaltyReg}" is returned:

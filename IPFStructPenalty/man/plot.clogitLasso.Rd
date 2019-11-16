@@ -4,7 +4,7 @@
 \alias{plot.clogitLasso}
 \title{Plots coefficients from a \code{clogitLasso} object}
 \usage{
-plot.clogitLasso(x, logLambda = TRUE, add.legend = FALSE,
+\method{plot}{clogitLasso}(x, logLambda = TRUE, add.legend = FALSE,
   add.labels = TRUE, lty = 1:ncol(x$beta), col = 1:ncol(x$beta), ...)
 }
 \arguments{
