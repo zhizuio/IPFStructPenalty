@@ -13,7 +13,7 @@ devtools::install_github("zhizuio/IPFStructPenalty/IPFStructPenalty")
 See the file `test.R` for s simple start with simulated data. The scripts `Sim_reg.R` and `GDSC_reg.R` are for simulation study and analyzing real data, respectively, presented in [Zhao \& Zucknick (2019)](https://arxiv.org/abs/1902.04996). The original runnings were on HPC. They will be every slow to be run on PC.
 
 ## Reference
-The preprint has been arXived [Zhao \& Zucknick (2019)](https://arxiv.org/abs/1902.04996): https://arxiv.org/abs/1902.04996. It is in press by Journal of the Royal Statistical Society: Series C (Applied Statistics), DOI:10.1111/rssc.12400.
+The preprint has been arXived [Zhao \& Zucknick (2019)](https://arxiv.org/abs/1902.04996): https://arxiv.org/abs/1902.04996. It is in press by [Journal of the Royal Statistical Society: Series C (Applied Statistics)](https://rss.onlinelibrary.wiley.com/journal/14679876), DOI:10.1111/rssc.12400.
 
 ## Update
 ### New in version IPFStructPenalty_1.0.2.tar.gz (15 November 2019):
