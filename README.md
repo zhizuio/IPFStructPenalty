@@ -26,7 +26,7 @@ The unpenalized argument for the conditional logistic lasso has been added and p
 
 ### Version IPFStructPenalty_1.0.tar.gz (23 August 2019):
 
-The package and all codes have been adapted to do all data analysis in the pre-print [Zhao \& Zucknick (2020)](https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/rssc.12400).
+The package and all codes have been adapted to do all data analysis in [Zhao \& Zucknick (2020)](https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/rssc.12400).
 
 ### Version IPFStructPenalty_0.1.4.tar.gz (21 August 2019):
 
