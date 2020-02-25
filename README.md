@@ -13,7 +13,7 @@ devtools::install_github("zhizuio/IPFStructPenalty/IPFStructPenalty")
 See the file `test.R` for s simple start with simulated data. The scripts `Sim_reg.R` and `GDSC_reg.R` are for simulation study and analyzing real data, respectively, presented in [Zhao \& Zucknick (2020)](https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/rssc.12400). The original runnings were on HPC. They will be every slow to be run on PC.
 
 ## Reference
-Zhao Z, Zucknick M (2019). *Structured penalized regression for drug sensitivity prediction*. Journal of the Royal Statistical Society: Series C (Applied Statistics). First published: 23 February 2020, URL: https://doi.org/10.1111/rssc.12400.
+Zhao Z, Zucknick M (2020). *Structured penalized regression for drug sensitivity prediction*. Journal of the Royal Statistical Society: Series C (Applied Statistics). First published: 23 February 2020, URL: https://doi.org/10.1111/rssc.12400.
 
 ## Update
 ### New in version IPFStructPenalty_1.0.2.tar.gz (15 November 2019):
