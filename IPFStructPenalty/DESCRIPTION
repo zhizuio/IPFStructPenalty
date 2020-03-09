@@ -1,7 +1,7 @@
 Package: IPFStructPenalty
 Type: Package
 Title: Structured multiresponse penalized regression
-Version: 1.0.2
+Version: 1.0.3
 Date: 2019-11-15
 Authors@R: c(person("Zhi", "Zhao", email = "zhi.zhao@medisin.uio.no", role = c("aut","cre")), person("Manuela", "Zucknick", email = "manuela.zucknick@medisin.uio.no", role = c("aut")))
 Maintainer@R: c(person("Zhi", "Zhao", email =
